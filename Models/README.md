@@ -1,7 +1,7 @@
 # Models
 
-The trained models have to be downloaded seperately, because they cannot be stored in git. <br>
-Their size is around 450MB and can be downloaded from my google drive.
+The trained models have to be downloaded separately, because they cannot be stored in git. <br>
+Their size is around 450MB and can be downloaded from my google drive via the links in the table below.
 
 ## Overview
 
