@@ -20,6 +20,7 @@ from detectron2.utils.visualizer import Visualizer, ColorMode
 from detectron2.utils.logger import setup_logger
 from detectron2.data import DatasetCatalog, MetadataCatalog, build_detection_test_loader
 from detectron2.structures import BoxMode
+from detectron2.structures.boxes import Boxes
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 
 # %%
@@ -178,7 +179,7 @@ def get_AudioLabs_dicts_from_json(data_dir, classes):
 
 # %%
 def generateAllJsonDataAnnotations():
-    annotation_types = [["system_measures"],["stave_measures"], ["staves"], ["system_measures", "stave_measures", "staves"]]
+    annotation_types = [["system_measures"], ["stave_measures"], ["staves"], ["system_measures", "stave_measures", "staves"]]
 
     muscima_data_dir = os.path.join(root_dir, "MuscimaPlusPlus_Measure_Annotations", "json")
     muscima_image_dir = os.path.join(root_dir, "CVC_Muscima_Augmented", "CVCMUSCIMA_MultiConditionAligned")
@@ -204,6 +205,17 @@ def generateAllJsonDataAnnotations():
 generateAllJsonDataAnnotations()
 
 #%%
+# to decide which data should be loaded use this:
+
+# type_of_annotation = ["system_measures"]
+# type_of_annotation = ["stave_measures"]
+type_of_annotation = ["staves"]
+
+# type_of_annotation = ["system_measures", "stave_measures", "staves"]
+
+json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
+
+#%%
 json_path = os.path.join(root_dir, "CVC_muscima_" + json_pathname_extension + ".json")
 
 muscima_data = load_from_json(json_path)
@@ -223,9 +235,6 @@ def registerDataset(data_name, d, data, classes):
     return MetadataCatalog.get(data_name)
 
 # %%
-from detectron2.utils.visualizer import ColorMode
-from detectron2.structures.boxes import Boxes
-
 class MyVisualizer(Visualizer):
     def _create_text_labels(self, classes, scores, class_names):
         """
@@ -398,7 +407,7 @@ class MyVisualizer(Visualizer):
         )
         return self.output
 
-# %%
+# %% the cv2_imshow from google-colab package
 from IPython import display
 import PIL
 
@@ -475,19 +484,14 @@ val_data_name = "val"
 registerDataset(val_data_name, val_data_name, val_data, type_of_annotation)
 
 # %%
-displayRandomSampleData(train_data, metadata, 1, [type_of_annotation.index("staves")])
+displayRandomSampleData(train_data, metadata, 3, [type_of_annotation.index("staves")])
 
 #%%
-def setup_cfg(num_classes, cfg_file, existing_model_weight_path=None):
+def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(cfg_file))
 
-    if existing_model_weight_path:
-        cfg.MODEL.WEIGHTS = existing_model_weight_path
-        continue_training = True
-    else:
-        cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(cfg_file)  # Let training initialize from model zoo
-        continue_training = False
+    cfg.MODEL.WEIGHTS = existing_model_weight_path
 
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2  # set the testing threshold for this model. Model should be at least 20% confident detection is correct
@@ -499,22 +503,21 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path=None):
     # Disabling all parallelism further increases reproducibility.
     cfg.SEED = 1
 
-    return cfg, continue_training
+    return cfg
 
 # %%
-# these two variables are not that important, but needed to call the setup_cfg
-max_iter = 20000
-val_period = 300
-
-model_output_dir = os.path.join(root_dir, "models")
+model_dir = os.path.join(root_dir, "Models", "R_101_FPN_3x-staves")
 
 cfg_file = "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml" # faster training, but slightly less AP, way smaller model (.pth) file
 weight_file = "final_staves_model.pth"
-path_to_weight_file = os.path.join(model_output_dir, weight_file) 
+path_to_weight_file = os.path.join(model_dir, weight_file) 
 
-cfg, continue_training = setup_cfg(len(type_of_annotation), cfg_file, path_to_weight_file)
+cfg = setup_cfg(len(type_of_annotation), cfg_file, path_to_weight_file)
 
 # %%
 predictor = DefaultPredictor(cfg)
+
+# %%
+displayRandomPredictData(test_data, metadata, 5)
 
 # %%
