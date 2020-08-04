@@ -76,7 +76,7 @@ class CustomVisualizer(Visualizer):
                 masks=masks, 
                 keypoints=keypts, 
                 assigned_colors=colors,
-                alpha=1.0 # added alpha to be 1.0
+                alpha=1000.0 # added alpha to be 1000.0
             )
 
         sem_seg = dic.get("sem_seg", None)
@@ -170,6 +170,6 @@ class CustomVisualizer(Visualizer):
             masks=masks,
             keypoints=keypoints,
             assigned_colors=colors,
-            alpha=1.0, # changed alpha to be 1.0
+            alpha=1000.0, # changed alpha to be 1000.0
         )
         return self.output
