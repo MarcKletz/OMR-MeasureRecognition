@@ -1,11 +1,13 @@
-pandas
-numpy
-opencv-python
-tqdm
-matplotlib
-omrdatasettools
-sklearn
--f https://download.pytorch.org/whl/torch_stable.html
-torch==1.6.0+cu101 
--f https://download.pytorch.org/whl/torch_stable.html
+matplotlib==3.3.0
+pandas==1.1.0
+omrdatasettools==1.3.1
+torch==1.6.0+cu101
 torchvision==0.7.0+cu101
+tqdm==4.48.2
+numpy==1.19.1
+streamlit==0.65.0
+opencv_python==4.3.0.36
+ipython==7.17.0
+Pillow==7.2.0
+Requests==2.24.0
+scikit_learn==0.23.2
