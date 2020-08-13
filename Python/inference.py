@@ -25,6 +25,8 @@ from CustomVisualiser import CustomVisualizer
 
 # %%
 root_dir = "./../Data" # change this to download to a specific location on your pc
+
+#%%
 DataLoader().download_datasets(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
 
@@ -35,6 +37,7 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # type_of_annotation = ["stave_measures"]
 type_of_annotation = ["staves"]
 
+# type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
@@ -57,16 +60,15 @@ def registerDataset(data_name, d, data, classes):
     MetadataCatalog.get(data_name).set(thing_classes=classes)
 
     return MetadataCatalog.get(data_name)
-
-# %%
+    
 muscima_metadata = registerDataset("muscima", "muscima", muscima_data, type_of_annotation)
 audioLabs_metadata = registerDataset("audioLabs", "audioLabs", audioLabs_data, type_of_annotation)
 
 # %%
-ImageDisplayer().displayRandomSampleData(muscima_data, muscima_metadata, 1, [type_of_annotation.index("staves")])
+ImageDisplayer().displayRandomSampleData(muscima_data, muscima_metadata, 1)
 
 # %%
-ImageDisplayer().displayRandomSampleData(audioLabs_data, audioLabs_metadata, 1, [type_of_annotation.index("staves")])
+ImageDisplayer().displayRandomSampleData(audioLabs_data, audioLabs_metadata, 1)
 
 # %%
 def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
@@ -88,14 +90,20 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     return cfg
 
 # %%
-model_dir = os.path.join(root_dir, "Models", "R_101_FPN_3x-staves")
+network_type = "R_50_FPN_3x"
+# network_type = "R_101_FPN_3x"
 
-cfg_file = "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml" # faster training, but slightly less AP, way smaller model (.pth) file
-weight_file = "final_staves_model.pth"
+model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
+
+cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
+
+weight_file = "final_" + json_pathname_extension + "_model.pth"
+# weight_file = "model_0000599.pth"
+
 path_to_weight_file = os.path.join(model_dir, weight_file) 
 
+#%%
 cfg = setup_cfg(len(type_of_annotation), cfg_file, path_to_weight_file)
-
 predictor = DefaultPredictor(cfg)
 
 # %%
@@ -103,3 +111,5 @@ ImageDisplayer().displayRandomPredictData(predictor, muscima_data, muscima_metad
 
 # %%
 ImageDisplayer().displayRandomPredictData(predictor, audioLabs_data, audioLabs_metadata, 5)
+
+# %%

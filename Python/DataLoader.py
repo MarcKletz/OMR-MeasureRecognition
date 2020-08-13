@@ -38,7 +38,7 @@ class DataLoader:
         idx = 0
         dataset_dicts = []
 
-        for json_file in tqdm(os.listdir(data_dir)):
+        for json_file in tqdm(sorted(os.listdir(data_dir))):
             with open(os.path.join(data_dir, json_file)) as f:
                 imgs_anns = json.load(f)
         
@@ -46,7 +46,7 @@ class DataLoader:
             folder_name = x[1].lower()
             image_name = x[2].lower().replace("n-", "p0") + ".png"
 
-            for augmentation_folder in os.listdir(image_dir):
+            for augmentation_folder in sorted(os.listdir(image_dir)):
                 path_to_image_file = os.path.join(image_dir, augmentation_folder, folder_name, image_name)
                 
                 record = {}
@@ -75,11 +75,11 @@ class DataLoader:
         idx = 0
         dataset_dicts = []
 
-        for folder in tqdm(os.listdir(data_dir)):
+        for folder in tqdm(sorted(os.listdir(data_dir))):
             if folder == "coco":
                 continue
             json_annotation_folder = os.path.join(data_dir, folder, "json")
-            for json_file in os.listdir(json_annotation_folder):
+            for json_file in sorted(os.listdir(json_annotation_folder)):
                 with open(os.path.join(json_annotation_folder, json_file)) as f:
                     imgs_anns = json.load(f)
 
@@ -120,7 +120,7 @@ class DataLoader:
         return dataset_dicts
 
     def generateAllJsonDataAnnotations(self, root_dir):
-        annotation_types = [["system_measures"], ["stave_measures"], ["staves"], ["system_measures", "stave_measures", "staves"]]
+        annotation_types = [["system_measures"], ["stave_measures"], ["staves"], ["system_measures", "staves"], ["system_measures", "stave_measures", "staves"]]
 
         muscima_data_dir = os.path.join(root_dir, "MuscimaPlusPlus_Measure_Annotations", "json")
         muscima_image_dir = os.path.join(root_dir, "CVC_Muscima_Augmented", "CVCMUSCIMA_MultiConditionAligned")

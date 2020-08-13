@@ -1,3 +1,4 @@
+import torch
 from detectron2.utils.visualizer import Visualizer, ColorMode
 from detectron2.structures import BoxMode
 from detectron2.structures.boxes import Boxes
@@ -126,7 +127,6 @@ class CustomVisualizer(Visualizer):
 
             for c in category:
                 for i in range(0, len(all_classes)):
-                    print(all_classes[i], c)
                     if all_classes[i] == c:
                         classes.append(all_classes[i])
 
