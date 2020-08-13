@@ -1,5 +1,0 @@
-*.pth
-*.vscode
-Data
-__pycache__
-events.out.*
