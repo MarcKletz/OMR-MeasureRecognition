@@ -1,0 +1,1 @@
+web: sh setup.sh && streamlit run Python/streamlit_playground.py
