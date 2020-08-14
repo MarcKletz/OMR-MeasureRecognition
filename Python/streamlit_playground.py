@@ -28,7 +28,7 @@ by Marc Kletz
 """
 
 root_dir = "./../Data"
-all_classes = ["staves", "system_measures", "stave_measures"]
+all_classes = ["system_measures", "stave_measures", "staves"]
 
 # External files to download.
 EXTERNAL_DEPENDENCIES = {
@@ -81,8 +81,7 @@ def main():
     if type_of_annotation == "model ensemble":
         handle_model_ensemble(model, display_original_image)
     else:
-        handle_standard_prediction(
-            model, display_original_image, type_of_annotation)
+        handle_standard_prediction(model, display_original_image, type_of_annotation)
 
 def download_file(file_path):
     if not os.path.exists(file_path):
@@ -157,7 +156,7 @@ def handle_standard_prediction(model, display_original_image, type_of_annotation
     if type_of_annotation == "system_measures-stave_measures-staves":
         cfg = setup_cfg(3, cfg_file, path_to_weight_file)
         display_multiple_classes = True
-        which_classes = [all_classes.index(x) for x in all_classes if x in type_of_annotation.split("-")]
+        which_classes = [all_classes.index(x) for x in type_of_annotation.split("-") if x in all_classes]
     else:
         cfg = setup_cfg(1, cfg_file, path_to_weight_file)
     predictor = DefaultPredictor(cfg)
@@ -198,7 +197,7 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     cfg.MODEL.WEIGHTS = existing_model_weight_path
 
     if not torch.cuda.is_available():
-        st.write("NO NVIDIA GPU FOUND - fallback to cpu")
+        st.write("NO NVIDIA GPU FOUND - fallback to CPU")
         cfg.MODEL.DEVICE = "cpu"
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
     # set the testing threshold for this model. Model should be at least 20% confident detection is correct
