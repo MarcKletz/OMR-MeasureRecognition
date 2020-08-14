@@ -144,7 +144,7 @@ def handle_model_ensemble(model, display_original_image):
             for img_file in img_file_buffer:
                 predict_image(predictor, img_file, display_original_image, custom_message=c)
         else:
-            predict_image(predictor, img_file, display_original_image, custom_message=c)
+            predict_image(predictor, img_file_buffer, display_original_image, custom_message=c)
 
 def handle_standard_prediction(model, display_original_image, type_of_annotation):
     model_dir = os.path.join(root_dir, "Models", model + "-" + type_of_annotation)
