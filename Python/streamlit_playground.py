@@ -197,6 +197,9 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
 
     cfg.MODEL.WEIGHTS = existing_model_weight_path
 
+    if not torch.cuda.is_available():
+        st.write("NO NVIDIA GPU FOUND - fallback to cpu")
+        cfg.MODEL.DEVICE = "cpu"
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
     # set the testing threshold for this model. Model should be at least 20% confident detection is correct
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2
