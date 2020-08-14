@@ -11,20 +11,22 @@ from detectron2.engine import DefaultPredictor
 from detectron2.engine import DefaultTrainer
 
 from DataLoader import DataLoader
+from MetricsVisualiser import MetricsVisualiser
 
 # %%
 root_dir = "./../Data" # change this to download to a specific location on your pc
 DataLoader().download_datasets(root_dir)
+DataLoader().download_trained_models(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
 
 # %%
 # to decide which data should be loaded use this:
 
-type_of_annotation = ["system_measures"]
+# type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
 # type_of_annotation = ["staves"]
 
-# type_of_annotation = ["system_measures", "staves"]
+type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
@@ -117,4 +119,6 @@ evaluator = COCOEvaluator(val_data_name, cfg, False, output_dir=cfg.OUTPUT_DIR)
 val_loader = build_detection_test_loader(cfg, val_data_name)
 print(inference_on_dataset(trainer.model, val_loader, evaluator))
 
+#%%
+MetricsVisualiser().visualiseMetrics(root_dir, network_type, type_of_annotation)
 # %%

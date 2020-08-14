@@ -1,15 +1,24 @@
 import os
 import json
 import cv2
+import requests
 from tqdm import tqdm
+import streamlit as st
+from zipfile import ZipFile
 
 from detectron2.structures import BoxMode
-
 from omrdatasettools.Downloader import Downloader
 from omrdatasettools.OmrDataset import OmrDataset
 
+# External files to download.
+google_drive_zip_id = "1YExJd-os3OU3yXJTXNOqS7ot-g-xGXzR"
+zip_file_size = 1475.78
+
 class DataLoader:
     def download_datasets(self, root_dir):
+        if not os.path.exists(root_dir):
+            os.mkdir(root_dir)
+
         muscima_plus_plus_path = os.path.join(root_dir, "MuscimaPlusPlus_V2")
         if not os.path.exists(muscima_plus_plus_path):
             Downloader().download_and_extract_dataset(OmrDataset.MuscimaPlusPlus_V2, muscima_plus_plus_path)
@@ -33,6 +42,58 @@ class DataLoader:
             Downloader().download_and_extract_dataset(OmrDataset.MeasureBoundingBoxAnnotations_v2, measure_bounding_box_annotations_v2_path)
         else:
             print("Measure_Bounding_Box_Annotations_v2 already exists")
+
+    def download_trained_models(self, root_dir):
+        if not os.path.exists(root_dir):
+            os.mkdir(root_dir)
+
+        is_running_with_streamlit = st._is_running_with_streamlit
+        file_path = os.path.join(root_dir, "Models")
+        if not os.path.exists(file_path):
+            download_warning, progress_bar = None, None
+            try:
+                if is_running_with_streamlit:
+                    download_warning = st.warning("Downloading %s this might take a bit  ..." % os.path.basename(file_path))
+                    progress_bar = st.progress(0)
+                else:
+                    print("Downloading %s this might take a bit..." % os.path.basename(file_path))
+
+                URL = "https://docs.google.com/uc?export=download"
+
+                session = requests.Session()
+                response = session.get(URL, params = { 'id' : google_drive_zip_id }, stream = True)
+                token = self.__get_confirm_token(response)
+
+                if token:
+                    params = { 'id' : google_drive_zip_id, 'confirm' : token }
+                    response = session.get(URL, params = params, stream = True)
+
+                counter = 0.0
+                MEGABYTES = 2.0 ** 20.0
+                length = zip_file_size * MEGABYTES
+                CHUNK_SIZE = 32768
+
+                with open(file_path, "wb") as f:
+                    for chunk in response.iter_content(CHUNK_SIZE):
+                        if chunk: # filter out keep-alive new chunks
+                            f.write(chunk)
+                            counter += len(chunk)
+
+                            if is_running_with_streamlit:
+                                download_warning.warning("Downloading %s  ... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES))
+                                progress_bar.progress(min(counter / length, 1.0))
+                            else:
+                                print("\rDownloading %s... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES), end="", flush=True)
+            finally:
+                if download_warning is not None:
+                    download_warning.empty()
+                if progress_bar is not None:
+                    progress_bar.empty()
+                zip_path = file_path + ".zip"
+                os.rename(file_path, zip_path)
+                with ZipFile(zip_path, "r") as zip_ref:
+                    zip_ref.extractall(file_path)
+                os.remove(zip_path)
 
     def get_CVC_Muscima_dicts(self, data_dir, image_dir, classes):
         idx = 0
@@ -177,3 +238,10 @@ class DataLoader:
         with open(json_path, "w") as outfile:
             json.dump(self.__convert_keys(data, self.__enum_to_names), outfile)
         print("saved to", outfile.name)
+
+    def __get_confirm_token(self, response):
+        for key, value in response.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+
+        return None
