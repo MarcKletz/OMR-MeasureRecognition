@@ -170,7 +170,7 @@ def handle_standard_prediction(model, display_original_image, type_of_annotation
         for img_file in img_file_buffer:
             predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes)
     else:
-        predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes)
+        predict_image(predictor, img_file_buffer, display_original_image, display_multiple_classes, which_classes)
 
 def predict_image(predictor, img_file, display_original_image, display_multiple_classes=False, which_classes=[], custom_message=""):
     image = Image.open(img_file).convert("RGB")
