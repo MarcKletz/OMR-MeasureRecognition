@@ -11,9 +11,7 @@ Will download the datasets from the OMR-Datasets repository, <br>
 download all the trained models as specified in the overview and <br>
 generate the json annotations for the datasets.
 
-## Overview
-
-# Faster R-CNN and ResNet-50 backbone
+## Faster R-CNN and ResNet-50 backbone
 |   Model Name        |   Iterations  |    mAP   |    AP75  |    AP50  |
 |:-------------------:|:-------------:|:--------:|:--------:|:--------:|
 |   System measures   |     5700      |  95.578  |  98.952  |  98.970  |
@@ -26,7 +24,7 @@ generate the json annotations for the datasets.
 |:---------------:|:------:|:--------------:|:------:|:----------:|:------:|
 | system_measures | TODO | stave_measures | TODO | staves     | TODO |
 
-# Faster R-CNN and ResNet-101 backbone
+## Faster R-CNN and ResNet-101 backbone
 |   Model Name        |   Iterations  |    mAP   |    AP75  |    AP50  |
 |:-------------------:|:-------------:|:--------:|:--------:|:--------:|
 |   System measures   |     8700      |  96.401  |  98.864  |  98.909  |
