@@ -20,7 +20,7 @@ class MetricsVisualiser:
                 scalars.append("bbox/AP-" + annotation)
 
         scalars += ["iteration", "bbox/AP", "bbox/AP50", "bbox/AP75", "fast_rcnn/cls_accuracy", 
-                    "fast_rcnn/false_negative", "loss_cls", "total_loss", "validation_loss"]
+                    "fast_rcnn/false_negative", "loss_cls", "total_loss", "validation_loss", "lr"]
 
         for scalar in scalars:
             if scalar == "iteration":
