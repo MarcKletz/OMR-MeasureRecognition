@@ -2,9 +2,11 @@
 
 All data required for this github project can be downloaded by using the provided DaterLoader script.
 Simply calling:
-```DataLoader().download_datasets(root_dir)
+```
+DataLoader().download_datasets(root_dir)
 DataLoader().download_trained_models(root_dir)
-DataLoader().generateAllJsonDataAnnotations(root_dir)```
+DataLoader().generateAllJsonDataAnnotations(root_dir)
+```
 Will download the datasets from the OMR-Datasets repository,
 download all the trained models as specified in the overview and
 generate the json annotations for the datasets.
