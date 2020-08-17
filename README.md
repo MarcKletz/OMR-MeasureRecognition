@@ -7,7 +7,6 @@ DataLoader().download_datasets(root_dir)
 DataLoader().download_trained_models(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
 ``` 
-<br>
 Will download the datasets from the OMR-Datasets repository, <br>
 download all the trained models as specified in the overview and <br>
 generate the json annotations for the datasets.
