@@ -35,9 +35,9 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 
 # type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
-# type_of_annotation = ["staves"]
+type_of_annotation = ["staves"]
 
-type_of_annotation = ["system_measures", "staves"]
+# type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
@@ -60,17 +60,6 @@ def registerDataset(data_name, d, data, classes):
     MetadataCatalog.get(data_name).set(thing_classes=classes)
 
     return MetadataCatalog.get(data_name)
-    
-muscima_metadata = registerDataset("muscima", "muscima", muscima_data, type_of_annotation)
-audioLabs_metadata = registerDataset("audioLabs", "audioLabs", audioLabs_data, type_of_annotation)
-
-# %%
-ImageDisplayer().displayRandomSampleData(muscima_data, muscima_metadata, 1)
-ImageDisplayer().displayRandomSampleData(muscima_data, muscima_metadata, 1)
-
-# %%
-ImageDisplayer().displayRandomSampleData(audioLabs_data, audioLabs_metadata, 1)
-ImageDisplayer().displayRandomSampleData(audioLabs_data, audioLabs_metadata, 1)
 
 # %%
 from sklearn.model_selection import train_test_split
@@ -108,8 +97,12 @@ def setup_cfg(train_data_name, test_data_name, val_period, max_iter, num_classes
     cfg.DATASETS.TRAIN = (train_data_name,)
     cfg.DATASETS.TEST = (test_data_name,)
 
-    # has to be 0 for windows see: https://github.com/pytorch/pytorch/issues/2341
-    cfg.DATALOADER.NUM_WORKERS = 0 # Number of data loading threads
+    # TODO: how about unix / mac?
+    if sys.platform.startswith("linux"):
+        cfg.DATALOADER.NUM_WORKERS = 4 # Number of data loading threads
+    else:
+        # has to be 0 for windows see: https://github.com/pytorch/pytorch/issues/2341
+        cfg.DATALOADER.NUM_WORKERS = 0 # Number of data loading threads
 
     if existing_model_weight_path:
         cfg.MODEL.WEIGHTS = existing_model_weight_path
@@ -137,7 +130,7 @@ def setup_cfg(train_data_name, test_data_name, val_period, max_iter, num_classes
     # steps = (3300, 4500, 6000, 7800, 9900, 12300, 15000, 18000)
     # or with a bit of extra code in a loop
     # steps = ()
-    # for i in range(cfg.SOLVER.WARMUP_ITERS * 2, val_period * 100, val_period * 3): # decrease lr every steps iteration (every 3 "epochs")
+    # for i in range(cfg.SOLVER.WARMUP_ITERS * 2, val_period * 100, val_period * 3): # decrease lr every 3 steps iteration (every 3 "epochs")
     #     steps = steps + (i, )
     # cfg.SOLVER.STEPS = steps
 
@@ -162,7 +155,7 @@ max_iter = 20000
 # val_period has to be dividable by 20 - see: https://github.com/facebookresearch/detectron2/issues/1714
 # because the PeriodicWriter hook defaults to logging every 20 iterations in https://github.com/facebookresearch/detectron2/blob/439134dd6fe7c7aa0df4571d27a6386c1678551f/detectron2/engine/hooks.py
 # if it is not dividable by 20, the custom variables in the storage will not be logged in the metrics.json file
-val_period = 300
+val_period = 100
 
 # smallest model, less AP, faster to train
 network_type = "R_50_FPN_3x"
@@ -173,18 +166,18 @@ network_type = "R_50_FPN_3x"
 # slowest training, but best AP
 # network_type = "X_101_32x8d_FPN_3x"
 
-model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
+model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension + "2")
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
 
 # if you already trained a model - link to its path with path
-weight_file = "model_0007199.pth"
-path_to_weight_file = os.path.join(model_dir, weight_file) 
+weight_file = "model_0000499.pth"
+path_to_weight_file = os.path.join(model_dir, weight_file)
 
 # to start training from scratch
-cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
+# cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
 
 # to continue training from weight file
-# cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
+cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
 
 # %%
 # generate the coco annotations for the evaluator before the evaluator hook
