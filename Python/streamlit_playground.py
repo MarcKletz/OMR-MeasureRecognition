@@ -20,9 +20,10 @@ from detectron2.engine import DefaultPredictor
 
 from CustomVisualiser import CustomVisualizer
 from DataLoader import DataLoader
+from MetricsVisualiser import MetricsVisualiser
 
 """
-# Inference with Detectron2 and a pretrained model
+# OMR Measure Recognition
 by Marc Kletz
 """
 
@@ -31,20 +32,61 @@ all_classes = ["system_measures", "stave_measures", "staves"]
 
 def main():
     DataLoader().download_datasets(root_dir)
-    DataLoader().download_pretrained_models(root_dir)
+    DataLoader().download_trained_models(root_dir)
 
     st.set_option('deprecation.showfileUploaderEncoding', False)
     st.sidebar.title("What to do")
 
+    what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference"])
     model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x"])
     type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
         ["staves", "system_measures", "stave_measures", "system_measures-stave_measures-staves", "model ensemble"])
-    display_original_image = st.sidebar.checkbox("Display the original image(s)", False)
 
+    if what_do == "Show metrics":
+        display_metrics(model, type_of_annotation)
+        
+    elif what_do == "Inference":
+        display_original_image = st.sidebar.checkbox("Display the original image(s)", False)
+
+        if type_of_annotation == "model ensemble":
+            handle_model_ensemble(model, display_original_image)
+        else:
+            handle_standard_prediction(model, display_original_image, type_of_annotation)
+
+def display_metrics(model, type_of_annotation):
+    df = pd.DataFrame(columns=["Model Name", "Iterations", "mAP", "AP75", "AP50"])
+    df.style.format({"E" : "{:.3%}"})
+    if model == "R_50_FPN_3x":
+        df = df.append({"Model Name" : "Staves", "Iterations" : 5700, "mAP" : 93.173, "AP75" : 100.00, "AP50" : 100.00}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures", "Iterations" : 5700, "mAP" : 95.578, "AP75" : 98.952, "AP50" : 98.970}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 9000, "mAP" : 87.510, "AP75" : 96.744, "AP50" : 98.020}, ignore_index=True)
+        # df = df.append({"Model Name" : "Combined", "Iterations" : 5700, "mAP" : 95.578, "AP75" : 98.952, "AP50" : 98.970}, ignore_index=True)
+    elif model == "R_101_FPN_3x":
+        df = df.append({"Model Name" : "Staves", "Iterations" : 15600, "mAP" : 94.293, "AP75" : 100.00, "AP50" : 100.00}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures", "Iterations" : 8700, "mAP" : 96.401, "AP75" : 98.864, "AP50" : 98.909}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 6300, "mAP" : 87.476, "AP75" : 96.823, "AP50" : 98.020}, ignore_index=True)
+        # df = df.append({"Model Name" : "Combined", "Iterations" : 5700, "mAP" : 95.578, "AP75" : 98.952, "AP50" : 98.970}, ignore_index=True)
+    if type_of_annotation == "staves":
+        st.table(df.loc[:0].set_index("Model Name"))
+    elif type_of_annotation == "system_measures":
+        st.table(df.loc[1:1].set_index("Model Name"))
+    elif type_of_annotation == "stave_measures":
+        st.table(df.loc[2:2].set_index("Model Name"))
+    elif type_of_annotation == "system_measures-stave_measures-staves":
+        st.write("THIS MODEL IS NOT READY YET!")
+        return
+        # st.table(df.loc[3:3].set_index("Model Name"))
+    elif type_of_annotation == "model ensemble":
+        st.table(df.set_index("Model Name"))
+    
     if type_of_annotation == "model ensemble":
-        handle_model_ensemble(model, display_original_image)
+        for c in all_classes:
+            st.markdown("# " + c)
+            MetricsVisualiser().visualiseMetrics(root_dir, model, [c])
     else:
-        handle_standard_prediction(model, display_original_image, type_of_annotation)
+        metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
+        st.markdown("# " + type_of_annotation)
+        MetricsVisualiser().visualiseMetrics(root_dir, model, metrics_type_annotations)
 
 def handle_model_ensemble(model, display_original_image):
     img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"])

@@ -122,6 +122,6 @@ print(inference_on_dataset(trainer.model, val_loader, evaluator))
 print("model has been trained for :", trainer.start_iter, "iterations")
 
 #%%
-MetricsVisualiser().visualiseMetrics(root_dir, network_type, type_of_annotation)
+MetricsVisualiser().visualiseMetrics(root_dir, network_type, json_pathname_extension)
 
 # %%

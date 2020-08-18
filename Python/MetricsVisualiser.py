@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import streamlit as st
 import os
 import json
 
@@ -33,8 +34,10 @@ class MetricsVisualiser:
                 [x[scalar] for x in metrics if scalar in x]
             )
             plt.legend([scalar], loc="best")
-
-            plt.show()
+            if st._is_running_with_streamlit:
+                st.pyplot()
+            else:
+                plt.show()
 
         fig = plt.figure(figsize=(10,5))
         axes = fig.add_axes([.25,.25,.75,.75])
@@ -45,3 +48,7 @@ class MetricsVisualiser:
             [x['iteration'] for x in metrics if 'validation_loss' in x], 
             [x['validation_loss'] for x in metrics if 'validation_loss' in x])
         plt.legend(['total_loss', 'validation_loss'], loc='upper right')
+        if st._is_running_with_streamlit:
+            st.pyplot()
+        else:
+            plt.show()
