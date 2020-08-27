@@ -1,9 +1,7 @@
 pandas
 omrdatasettools
--f https://download.pytorch.org/whl/torch_stable.html
-torch==1.6.0+cu101
--f https://download.pytorch.org/whl/torch_stable.html
-torchvision==0.7.0+cu101
+torch
+torchvision
 tqdm
 numpy
 streamlit
@@ -11,5 +9,4 @@ opencv_python
 Pillow
 Requests
 scikit_learn
--f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html
-detectron2==0.2.1
+detectron2
