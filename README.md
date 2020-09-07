@@ -41,49 +41,50 @@ generate the json annotations for the datasets.
 
 # Intallation Setup
 
-General prerequirements: <br>
+Requirements before starting: <br>
 Python >= 3.6 <br>
-Git
+Git <br>
+Cuda Toolkit 10.1 <br>
 
 ## For Linux:
 
-simply run the command: <br>
+install all the required python librarys <br>
 pip install -r linux_requirements.txt
 
 ## For Windows:
 
 Prereqs: <br>
 Windows SDK <br>
-C++14 compiler <br>
+C++14 build tools <br>
 
-git clone https://github.com/facebookresearch/detectron2.git <br>
-git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # pull detectron 0.2.1 <br>
-cd into the detectron2 folder where setup.py is <br>
-python setup.py install
+Step 1: <br>
+install all the required python librarys <br>
+from OMR-
+`pip install -r Python/windows_requirements.txt` <br>
 
-ERROR: <br>
-detectron2\layers\csrc\cocoeval\cocoeval.cpp(483): error C3861: 'localtime_r': identifier not found <br>
-https://github.com/conansherry/detectron2/issues/2
+Step 2: <br>
+manually install detectron2 because there is no windows support, we need to pull and install from source <br>
+```
+git clone https://github.com/facebookresearch/detectron2.git
+cd detectron2
+git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # to pull detectron version 0.2.1
+```
+change the following line in detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp(483): <br>
+localtime_r(&rawtime, &local_time) to localtime_s(&local_time, &rawtime); <br>
+solution from : https://github.com/conansherry/detectron2/issues/2 <br>
+now you can install with (run cmd as admin): <br>
+`python setup.py install`
 
-change localtime_r(a, b) to localtime_s(&local_time, &rawtime); <br>
-save and run  <br>
-python setup.py install again
+## Hack to accept multiple files with streamlit api:
+if you want to be able to use inference on multiple files you will have to modify the streamlit code. <br>
+First find where your python side-packages are located. <br>
+For Linux they are at /home/<YOUR USER>/.local/lib/<YOUR PYTHON VERSION>/site-packages/streamlit/elements/file_uploader.py <br>
+Example path : /home/appuser/.local/lib/python3.6/site-packages/streamlit/elements/file_uploader.py
 
-detectron2/layers/csrc/nms_rotated/nms_rotated_cuda.cu(14): error: name must be a namespace name <br>
-insert #define WITH_HIP before #ifdef WITH_HIP
+For Windows they are at something like "C:\Users\<YOUR USER>\AppData\Local\Programs\Python\<YOUR PYTHON VERSION>\Lib\site-packages" <br>
+Example path: C:\Users\Marc\AppData\Local\Programs\Python\Python37\Lib\site-packages\streamlit
 
-ERROR: <br>
-cl : Command line error D8021 : invalid numeric argument '/Wno-cpp' <br>
-error: command 'C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\BIN\\x86_amd64\\cl.exe' failed with exit status 2
-
-pull cocodataset from <br>
-https://github.com/cocodataset/cocoapi
-
-the solution is here by user TonyNgo1 (real MVP): <br>
-https://github.com/cocodataset/cocoapi/issues/51
-
-cd into the folder and run <br>
-python setup.py install
-
-now cd back to detectron2 and complete <br>
-python setup.py install
+From here navigate to elements\file_uploader.py <br>
+Open and change the line accept_multiple_files = False to accept_multiple_files = True <br>
+This might change in future versions of streamlit to be enabled by default, but the current version I am using (0.66.0) needs this fix. <br>
+I will remove this fix if any future versions of streamlit update this.

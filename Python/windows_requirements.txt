@@ -12,3 +12,4 @@ streamlit==0.66.0
 Pillow
 Requests
 scikit_learn
+ninja

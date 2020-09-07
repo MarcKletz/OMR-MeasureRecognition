@@ -27,7 +27,7 @@ from MetricsVisualiser import MetricsVisualiser
 by Marc Kletz
 """
 
-root_dir = "./../Data"
+root_dir = "./Data"
 all_classes = ["system_measures", "stave_measures", "staves"]
 
 def main():
