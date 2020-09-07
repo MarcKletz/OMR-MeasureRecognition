@@ -43,7 +43,8 @@ generate the json annotations for the datasets.
 
 Requirements before starting:  
 Python >= 3.6  
-Cuda Toolkit 10.1
+to run training and testing you need a CUDA capable device and the Cuda Toolkit 10.1  
+you can run the streamlit app which does inference without CUDA
 
 ## For Linux:
 
