@@ -1,3 +1,5 @@
+# THIS REPO AND README IS STILL UNDER HEAVY DEVELOPMENT!
+
 # About this repo
 
 All data required for this github project can be downloaded by using the provided DaterLoader script. <br>
@@ -36,3 +38,53 @@ generate the json annotations for the datasets.
 | Category        | mAP    | Category       | mAP    | Category   | mAP    |
 |:---------------:|:------:|:--------------:|:------:|:----------:|:------:|
 | system_measures | TODO | stave_measures | TODO | staves     | TODO |
+
+# Intallation Setup
+
+General prerequirements
+Python >= 3.6
+Git
+
+## For Linux:
+
+simply run the command:
+pip install -r linux_requirements.txt
+
+## For Windows:
+
+Prereqs:
+Windows SDK
+C++14 compiler
+
+git clone https://github.com/facebookresearch/detectron2.git
+git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # pull detectron 0.2.1
+cd into the detectron2 folder where setup.py is
+run 
+python setup.py install
+
+ERROR:
+detectron2\layers\csrc\cocoeval\cocoeval.cpp(483): error C3861: 'localtime_r': identifier not found
+https://github.com/conansherry/detectron2/issues/2
+
+change localtime_r(a, b) to localtime_s(&local_time, &rawtime);
+save and run 
+python setup.py install again
+
+detectron2/layers/csrc/nms_rotated/nms_rotated_cuda.cu(14): error: name must be a namespace name
+insert #define WITH_HIP before #ifdef WITH_HIP
+
+ERROR:
+cl : Command line error D8021 : invalid numeric argument '/Wno-cpp'
+error: command 'C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\BIN\\x86_amd64\\cl.exe' failed with exit status 2
+
+pull cocodataset from
+https://github.com/cocodataset/cocoapi
+
+the solution is here by user TonyNgo1 (real MVP):
+https://github.com/cocodataset/cocoapi/issues/51
+
+cd into the folder and run
+python setup.py install
+
+now cd back to detectron2 and complete
+python setup.py install

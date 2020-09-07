@@ -3,3 +3,6 @@
 Data
 __pycache__
 events.out.*
+.dockerignore
+Dockerfile
+SetupUbuntu.sh

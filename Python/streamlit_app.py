@@ -31,7 +31,6 @@ root_dir = "./../Data"
 all_classes = ["system_measures", "stave_measures", "staves"]
 
 def main():
-    DataLoader().download_datasets(root_dir)
     DataLoader().download_trained_models(root_dir)
 
     st.set_option('deprecation.showfileUploaderEncoding', False)
