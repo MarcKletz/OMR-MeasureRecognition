@@ -14,7 +14,7 @@ from DataLoader import DataLoader
 from MetricsVisualiser import MetricsVisualiser
 
 # %%
-root_dir = "./../Data" # change this to download to a specific location on your pc
+root_dir = "./Data" # change this to download to a specific location on your pc
 DataLoader().download_datasets(root_dir)
 DataLoader().download_trained_models(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
