@@ -59,14 +59,19 @@ sudo apt install build-essential
 Step 2:  
 Install python development version.  
 ```
-sudo yum install python-devel
+sudo yum install python36-devel
 or
 sudo apt-get install python-dev
 ```
 
+Step 3:
+Install cython manually before running the requirements install:
+```pip3 install cython```
+It is needed for pycocotools because pip will build all packages first, before attempting to install them. ((ﾉ☉ヮ⚆)ﾉ ┻━┻)
+
 Step 3:  
 install all the required python libraries from this repository:  
-```pip3 install -r linux_requirements.txt```
+```pip3 install -r Python/linux_requirements.txt```
 
 ## For Windows:
 
