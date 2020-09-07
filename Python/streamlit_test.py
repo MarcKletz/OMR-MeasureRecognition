@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import PIL
-import os, json, cv2, random
+import cv2
 from IPython import display
 
 def main():
