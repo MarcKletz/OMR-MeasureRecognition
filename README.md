@@ -52,39 +52,38 @@ pip install -r linux_requirements.txt
 
 ## For Windows:
 
-Prereqs:
-Windows SDK
-C++14 compiler
+Prereqs: <br>
+Windows SDK <br>
+C++14 compiler <br>
 
-git clone https://github.com/facebookresearch/detectron2.git
-git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # pull detectron 0.2.1
-cd into the detectron2 folder where setup.py is
-run 
+git clone https://github.com/facebookresearch/detectron2.git <br>
+git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # pull detectron 0.2.1 <br>
+cd into the detectron2 folder where setup.py is <br>
 python setup.py install
 
-ERROR:
-detectron2\layers\csrc\cocoeval\cocoeval.cpp(483): error C3861: 'localtime_r': identifier not found
+ERROR: <br>
+detectron2\layers\csrc\cocoeval\cocoeval.cpp(483): error C3861: 'localtime_r': identifier not found <br>
 https://github.com/conansherry/detectron2/issues/2
 
-change localtime_r(a, b) to localtime_s(&local_time, &rawtime);
-save and run 
+change localtime_r(a, b) to localtime_s(&local_time, &rawtime); <br>
+save and run  <br>
 python setup.py install again
 
-detectron2/layers/csrc/nms_rotated/nms_rotated_cuda.cu(14): error: name must be a namespace name
+detectron2/layers/csrc/nms_rotated/nms_rotated_cuda.cu(14): error: name must be a namespace name <br>
 insert #define WITH_HIP before #ifdef WITH_HIP
 
-ERROR:
-cl : Command line error D8021 : invalid numeric argument '/Wno-cpp'
+ERROR: <br>
+cl : Command line error D8021 : invalid numeric argument '/Wno-cpp' <br>
 error: command 'C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\BIN\\x86_amd64\\cl.exe' failed with exit status 2
 
-pull cocodataset from
+pull cocodataset from <br>
 https://github.com/cocodataset/cocoapi
 
-the solution is here by user TonyNgo1 (real MVP):
+the solution is here by user TonyNgo1 (real MVP): <br>
 https://github.com/cocodataset/cocoapi/issues/51
 
-cd into the folder and run
+cd into the folder and run <br>
 python setup.py install
 
-now cd back to detectron2 and complete
+now cd back to detectron2 and complete <br>
 python setup.py install
