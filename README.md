@@ -2,7 +2,7 @@
 
 # About this repo
 
-All data required for this github project can be downloaded by using the provided DaterLoader script.  
+All data required for this GitHub project can be downloaded by using the provided DaterLoader script.  
 Simply calling:  
 ```
 DataLoader().download_datasets(root_dir)
@@ -39,26 +39,31 @@ generate the json annotations for the datasets.
 |:---------------:|:------:|:--------------:|:------:|:----------:|:------:|
 | system_measures | TODO | stave_measures | TODO | staves     | TODO |
 
-# Intallation Setup
+# Installation Setup
 
 Requirements before starting:  
 Python >= 3.6  
-to run training and testing you need a CUDA capable device and the Cuda Toolkit 10.1  
+to run training and testing you need a CUDA capable device and the CUDA Toolkit 10.1  
 you can run the streamlit app which does inference without CUDA
 
 ## For Linux:
 
-install all the required python librarys  
+install all the required python libraries  
 pip install -r linux_requirements.txt
 
 ## For Windows:
 
-Prereqs:  
-Windows SDK (https://go.microsoft.com/fwlink/p/?linkid=2120843)  
-C++14 build tools (https://www.microsoft.com/en-us/download/confirmation.aspx?id=48159)
+Requirements:  
+Windows SDK  
+C++14.0 build tools  
+Microsoft Visual C++ Redistributable  
+can all be installed with the Visual Studio installer.  
+https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16
+
+![](Images/VS_setup.png)
 
 Step 1:  
-install all the required python librarys  
+install all the required python libraries  
 ```pip install -r Python/windows_requirements.txt```
 
 Step 2:  
@@ -74,7 +79,7 @@ solution from : https://github.com/conansherry/detectron2/issues/2
 now you can install with (run cmd as admin):  
 ```python setup.py install```
 
-## Hack to accept multiple files with streamlit api:
+## Hack to accept multiple files with streamlit API:
 
 if you want to be able to use inference on multiple files you will have to modify the streamlit code.  
 First find where your python side-packages are located by running:
