@@ -48,8 +48,25 @@ you can run the streamlit app which does inference without CUDA
 
 ## For Linux:
 
-install all the required python libraries  
-pip install -r linux_requirements.txt
+Step 1:  
+You will require some build / development tools, install them by running:  
+```
+sudo yum groupinstall "Development Tools"
+or
+sudo apt install build-essential
+```
+
+Step 2:  
+Install python development version.  
+```
+sudo yum install python-devel
+or
+sudo apt-get install python-dev
+```
+
+Step 3:  
+install all the required python libraries from this repository:  
+```pip3 install -r linux_requirements.txt```
 
 ## For Windows:
 
@@ -58,12 +75,11 @@ Windows SDK
 C++14.0 build tools  
 Microsoft Visual C++ Redistributable  
 can all be installed with the Visual Studio installer.  
-https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16
-
+https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16  
 ![](Images/VS_setup.png)
 
 Step 1:  
-install all the required python libraries  
+install all the required python libraries from the OMR-MeasureRecognition repo.  
 ```pip install -r Python/windows_requirements.txt```
 
 Step 2:  
@@ -73,11 +89,16 @@ git clone https://github.com/facebookresearch/detectron2.git
 cd detectron2
 git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # to pull detectron version 0.2.1
 ```
+
+Step 3:  
 change the following line in detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp(483):  
 localtime_r(&rawtime, &local_time) to localtime_s(&local_time, &rawtime);  
 solution from : https://github.com/conansherry/detectron2/issues/2  
-now you can install with (run cmd as admin):  
+
+Step 4:  
+now you can install detectron2 with:  
 ```python setup.py install```
+Requires admin privileges, so run cmd as admin!
 
 ## Hack to accept multiple files with streamlit API:
 
