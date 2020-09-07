@@ -76,14 +76,8 @@ now you can install with (run cmd as admin):
 ## Hack to accept multiple files with streamlit api:
 
 if you want to be able to use inference on multiple files you will have to modify the streamlit code.  
-First find where your python side-packages are located.  
-
-**For Linux** they are at /home/<YOUR USER>/.local/lib/<YOUR PYTHON VERSION>/site-packages/streamlit/elements/file_uploader.py  
-Example path : /home/appuser/.local/lib/python3.6/site-packages/streamlit/elements/file_uploader.py
-
-**For Windows** they are at something like "C:\Users\<YOUR USER>\AppData\Local\Programs\Python\<YOUR PYTHON VERSION>\Lib\site-packages"  
-Example path: C:\Users\Marc\AppData\Local\Programs\Python\Python37\Lib\site-packages\streamlit
-
+First find where your python side-packages are located by running:
+```pip show streamlit```  
 From here navigate to elements\file_uploader.py  
 Open and change the line accept_multiple_files = False to accept_multiple_files = True  
 This might change in future versions of streamlit to be enabled by default, but the current version I am using (0.66.0) needs this fix.  
