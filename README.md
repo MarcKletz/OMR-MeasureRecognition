@@ -41,13 +41,13 @@ generate the json annotations for the datasets.
 
 # Intallation Setup
 
-General prerequirements
-Python >= 3.6
+General prerequirements: <br>
+Python >= 3.6 <br>
 Git
 
 ## For Linux:
 
-simply run the command:
+simply run the command: <br>
 pip install -r linux_requirements.txt
 
 ## For Windows:
