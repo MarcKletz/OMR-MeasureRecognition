@@ -53,7 +53,7 @@ You will require some build / development tools, install them by running:
 ```
 sudo yum groupinstall "Development Tools"
 or
-sudo apt install build-essential
+sudo apt-get install build-essential
 ```
 
 Step 2:  
@@ -74,13 +74,15 @@ This is needed for pycocotools because pip apparently builds all packages first,
 **Ubuntu:**  
 Needs the skbuild package to install opencv-python-headless, which can be installed with:  
 ```pip3 install scikit-build```  
-opencv-python-headless also requires cmake to build since it might not find wheels for it and you have to build it first.  
-```sudo apt install cmake```
+opencv-python-headless also requires cmake since it might not find wheels for it and you have to build it first.  
+```sudo apt-get install cmake```  
+for faster building install ninja:  
+```sudo apt-get install ninja-build```
 
 Step 4:  
 install all the required python libraries from this repository:  
 ```sudo pip3 install -r Python/linux_requirements.txt```  
-This might take a while! So be patient, you may add the -vvv tag to see installation progress.  
+This might take a while! So be patient, you may add the -v tag to see installation progress.  
 Especially on Ubuntu, building the opencv-python-headless package takes **very** long.
 
 ## For Windows:
