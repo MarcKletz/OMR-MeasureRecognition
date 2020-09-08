@@ -72,18 +72,17 @@ This is needed for pycocotools because pip apparently builds all packages first,
 (ﾉ☉ヮ⚆)ﾉ ┻━┻
 
 **Ubuntu:**  
-Needs the skbuild package to install opencv-python-headless, which can be installed with:  
-```pip3 install scikit-build```  
-opencv-python-headless also requires cmake since it might not find wheels for it and you have to build it first.  
-```sudo apt-get install cmake```  
-for faster building install ninja:  
-```sudo apt-get install ninja-build```
+There are no wheels available for opencv-python-headless on some ubuntu distributions.  
+Instead of building it on your own, I recommend to install it with the following command.  
+```sudo apt install python3-opencv```  
+Dont forget to remove the opencv-python-headless requirement from the linux_requirements.txt if you did this!  
+Make sure that the python package installation location is added to path, so that you can run streamlit. If the streamlit command fails with "command not found" you might need to add the following to your path:  
+```export PATH="$HOME/.local/bin:$PATH"```
 
 Step 4:  
 install all the required python libraries from this repository:  
-```sudo pip3 install -r Python/linux_requirements.txt```  
+```sudo pip3 install -r Python/linux_requirements.txt [-v]```  
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
-Especially on Ubuntu, building the opencv-python-headless package takes **very** long.
 
 ## For Windows:
 
