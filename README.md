@@ -61,14 +61,23 @@ Install python development version.
 ```
 sudo yum install python36-devel
 or
-sudo apt-get install python-dev
+sudo apt-get install python3-dev
 ```
 
-Step 3:
-Install cython manually before running the requirements install:
+Step 3 (OS DEPENDENT):
+**CentOS, Amazon Linux AMI, Red Hat Enterprise Linux:**  
+Needs cython before running the requirements install:
 ```pip3 install cython```  
-It is needed for pycocotools because pip will build all packages first, before attempting to install them.  
+Is needed for pycocotools because pip apparently builds all packages first, before attempting to install them.  
 (ﾉ☉ヮ⚆)ﾉ ┻━┻
+
+**Ubuntu:**  
+Needs the skbuild package to install opencv-python-headless, which can be installed with:  
+```pip3 install scikit-build```  
+However, I recommend removing the opencv-python-headless requirement from the requirements file
+and installing opencv2 with the following command instead:  
+```sudo apt-get install python3-opencv```  
+because installing it with python will take a **very** long time!
 
 Step 4:  
 install all the required python libraries from this repository:  
@@ -105,6 +114,12 @@ Step 4:
 now you can install detectron2 with:  
 ```python setup.py install```
 Requires admin privileges, so run cmd as admin!
+
+# Run the Streamlit app:
+
+Complete the installation instructions and then run:  
+```streamlit run Python/streamlit_app.py```  
+from the OMR-MeasureRecognition repository
 
 ## Hack to accept multiple files with streamlit API:
 
