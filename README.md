@@ -66,9 +66,9 @@ sudo apt-get install python3-dev
 
 Step 3 (OS DEPENDENT):  
 **CentOS, Amazon Linux AMI, Red Hat Enterprise Linux:**  
-Needs cython before running the requirements install:
+Needs cython before running the requirements install:  
 ```pip3 install cython```  
-Is needed for pycocotools because pip apparently builds all packages first, before attempting to install them.  
+This is needed for pycocotools because pip apparently builds all packages first, before attempting to install them.  
 (ﾉ☉ヮ⚆)ﾉ ┻━┻
 
 **Ubuntu:**  

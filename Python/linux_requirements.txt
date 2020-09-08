@@ -1,3 +1,17 @@
--r windows_requirements.txt
+matplotlib
+pandas
+omrdatasettools
+opencv-python-headless
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.6.0+cu101
+-f https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.7.0+cu101
+tqdm
+numpy>=1.16.4
+streamlit==0.66.0
+Pillow
+Requests
+scikit_learn
+ninja
 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html
 detectron2==0.2.1
