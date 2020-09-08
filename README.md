@@ -64,7 +64,7 @@ or
 sudo apt-get install python3-dev
 ```
 
-Step 3 (OS DEPENDENT):
+Step 3 (OS DEPENDENT):  
 **CentOS, Amazon Linux AMI, Red Hat Enterprise Linux:**  
 Needs cython before running the requirements install:
 ```pip3 install cython```  
