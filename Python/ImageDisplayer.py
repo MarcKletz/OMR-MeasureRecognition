@@ -2,7 +2,7 @@ import cv2
 import random
 import PIL
 from IPython import display
-from CustomVisualiser import CustomVisualizer
+from CustomVisualizer import CustomVisualizer
 
 class ImageDisplayer():
 

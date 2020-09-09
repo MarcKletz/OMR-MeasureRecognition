@@ -21,7 +21,7 @@ from detectron2.engine import DefaultPredictor
 # importing custom classes from the repo
 from DataLoader import DataLoader
 from ImageDisplayer import ImageDisplayer
-from CustomVisualiser import CustomVisualizer
+from CustomVisualizer import CustomVisualizer
 
 # %%
 root_dir = "./Data" # change this to download to a specific location on your pc

@@ -22,7 +22,7 @@ from detectron2.evaluation import COCOEvaluator
 # importing custom classes from the repo
 from DataLoader import DataLoader
 from ImageDisplayer import ImageDisplayer
-from CustomVisualiser import CustomVisualizer
+from CustomVisualizer import CustomVisualizer
 from CustomTrainer import CustomTrainer
 
 # %%
