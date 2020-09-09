@@ -1,5 +1,6 @@
 import torch
-from detectron2.utils.visualizer import Visualizer, ColorMode
+import numpy as np
+from detectron2.utils.visualizer import Visualizer, ColorMode, GenericMask
 from detectron2.structures import BoxMode
 from detectron2.structures.boxes import Boxes
 
@@ -77,8 +78,7 @@ class CustomVisualizer(Visualizer):
                 masks=masks, 
                 keypoints=keypts, 
                 assigned_colors=colors,
-                alpha=1000.0 # added alpha to be 1000.0
-            )
+                alpha=1.0            )
 
         sem_seg = dic.get("sem_seg", None)
         if sem_seg is None and "sem_seg_file_name" in dic:
@@ -170,6 +170,6 @@ class CustomVisualizer(Visualizer):
             masks=masks,
             keypoints=keypoints,
             assigned_colors=colors,
-            alpha=1000.0, # changed alpha to be 1000.0
+            alpha=1
         )
         return self.output

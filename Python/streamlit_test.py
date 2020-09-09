@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 from PIL import Image
 import streamlit as st
 
@@ -25,6 +27,7 @@ def main():
 def test_detectron():
 	image = Image.open("./Images/detectron_test_image.jpg").convert("RGB")
 	st.image(image, "Your uploaded image", use_column_width=True)
+	im = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
 	cfg = get_cfg()
 	cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
