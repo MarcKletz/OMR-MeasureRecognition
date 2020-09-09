@@ -31,18 +31,19 @@ root_dir = "./Data"
 all_classes = ["system_measures", "stave_measures", "staves"]
 
 def main():
-    DataLoader().download_trained_models(root_dir)
+	st.write("THIS WORKS?")
+    # DataLoader().download_trained_models(root_dir)
 
-    st.set_option('deprecation.showfileUploaderEncoding', False)
-    st.sidebar.title("What to do")
+    # st.set_option('deprecation.showfileUploaderEncoding', False)
+    # st.sidebar.title("What to do")
 
-    what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference"])
-    model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x"])
-    type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
-        ["staves", "system_measures", "stave_measures", "system_measures-stave_measures-staves", "model ensemble"])
+    # what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference"])
+    # model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x"])
+    # type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
+        # ["staves", "system_measures", "stave_measures", "system_measures-stave_measures-staves", "model ensemble"])
 
-    if what_do == "Show metrics":
-        display_metrics(model, type_of_annotation)
+    # if what_do == "Show metrics":
+        # display_metrics(model, type_of_annotation)
         
     # elif what_do == "Inference":
         # display_original_image = st.sidebar.checkbox("Display the original image(s)", False)
