@@ -24,7 +24,7 @@ def main():
 	
 def test_detectron():
 	im = cv2.imread("../Images/detectron_test_image.jpg")
-	ImageDisplayer.cv2_imshow(im)
+	ImageDisplayer().cv2_imshow(im)
 
 if __name__ == "__main__":
 	main()
