@@ -76,8 +76,6 @@ There are no wheels available for opencv-python-headless on some ubuntu distribu
 Instead of building it on your own, I recommend to install it with the following command.  
 ```sudo apt install python3-opencv```  
 Dont forget to remove the opencv-python-headless requirement from the linux_requirements.txt if you did this!  
-Make sure that the python package installation location is added to path, so that you can run streamlit. If the streamlit command fails with "command not found" you might need to add the following to your path:  
-```export PATH="$HOME/.local/bin:$PATH"```
 
 Step 4:  
 install all the required python libraries from this repository:  
@@ -117,6 +115,9 @@ now you can install detectron2 with:
 Requires admin privileges, so run cmd as admin!
 
 # Run the Streamlit app:
+
+Make sure that the python package installation location is added to path, so that you can run streamlit. If the streamlit command fails with "command not found" you will need to add the following to your path:  
+```export PATH="$HOME/.local/bin:$PATH"```
 
 Complete the installation instructions and then run:  
 ```streamlit run Python/streamlit_app.py```  
