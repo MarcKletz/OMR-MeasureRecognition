@@ -8,6 +8,7 @@ import os
 import random
 import logging
 import json
+import sys
 from tqdm import tqdm
 from matplotlib import pyplot as plt
 
@@ -26,7 +27,7 @@ from CustomVisualizer import CustomVisualizer
 from CustomTrainer import CustomTrainer
 
 # %%
-root_dir = "./Data" # change this to download to a specific location on your pc
+root_dir = "./../Data" # change this to download to a specific location on your pc
 DataLoader().download_datasets(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
 
@@ -34,8 +35,8 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # to decide which data should be loaded use this:
 
 # type_of_annotation = ["system_measures"]
-# type_of_annotation = ["stave_measures"]
-type_of_annotation = ["staves"]
+type_of_annotation = ["stave_measures"]
+# type_of_annotation = ["staves"]
 
 # type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
@@ -155,18 +156,18 @@ max_iter = 20000
 # val_period has to be dividable by 20 - see: https://github.com/facebookresearch/detectron2/issues/1714
 # because the PeriodicWriter hook defaults to logging every 20 iterations in https://github.com/facebookresearch/detectron2/blob/439134dd6fe7c7aa0df4571d27a6386c1678551f/detectron2/engine/hooks.py
 # if it is not dividable by 20, the custom variables in the storage will not be logged in the metrics.json file
-val_period = 100
+val_period = 300
 
 # smallest model, less AP, faster to train
-network_type = "R_50_FPN_3x"
+# network_type = "R_50_FPN_3x"
 
 # faster training, but slightly less AP, way smaller model (.pth) file
 # network_type = "R_101_FPN_3x"
 
 # slowest training, but best AP
-# network_type = "X_101_32x8d_FPN_3x"
+network_type = "X_101_32x8d_FPN_3x"
 
-model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension + "2")
+model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
 
 # if you already trained a model - link to its path with path
@@ -174,10 +175,10 @@ weight_file = "model_0000499.pth"
 path_to_weight_file = os.path.join(model_dir, weight_file)
 
 # to start training from scratch
-# cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
+cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
 
 # to continue training from weight file
-cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
+# cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
 
 # %%
 # generate the coco annotations for the evaluator before the evaluator hook

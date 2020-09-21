@@ -14,7 +14,7 @@ from DataLoader import DataLoader
 from MetricsVisualiser import MetricsVisualiser
 
 # %%
-root_dir = "./Data" # change this to download to a specific location on your pc
+root_dir = "./../Data" # change this to download to a specific location on your pc
 DataLoader().download_datasets(root_dir)
 DataLoader().download_trained_models(root_dir)
 DataLoader().generateAllJsonDataAnnotations(root_dir)
@@ -24,9 +24,9 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 
 # type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
-type_of_annotation = ["staves"]
+# type_of_annotation = ["staves"]
 
-# type_of_annotation = ["system_measures", "staves"]
+type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
@@ -97,8 +97,8 @@ def setup_cfg(train_data_name, test_data_name, num_classes, model_output_dir, cf
     return cfg
 
 # %%
-# network_type = "R_50_FPN_3x"
-network_type = "R_101_FPN_3x"
+network_type = "R_50_FPN_3x"
+# network_type = "R_101_FPN_3x"
 
 model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
 
@@ -122,6 +122,6 @@ print(inference_on_dataset(trainer.model, val_loader, evaluator))
 print("model has been trained for :", trainer.start_iter, "iterations")
 
 #%%
-MetricsVisualiser().visualiseMetrics(root_dir, network_type, json_pathname_extension)
+MetricsVisualiser().visualiseMetrics(root_dir, network_type, type_of_annotation)
 
 # %%

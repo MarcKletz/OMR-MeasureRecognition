@@ -24,7 +24,7 @@ from ImageDisplayer import ImageDisplayer
 from CustomVisualizer import CustomVisualizer
 
 # %%
-root_dir = "./Data" # change this to download to a specific location on your pc
+root_dir = "./../Data" # change this to download to a specific location on your pc
 
 #%%
 DataLoader().download_datasets(root_dir)
