@@ -1,5 +1,5 @@
 #%%
-import os
+import os, sys
 from sklearn.model_selection import train_test_split
 
 import detectron2
@@ -22,11 +22,11 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # %%
 # to decide which data should be loaded use this:
 
-# type_of_annotation = ["system_measures"]
+type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
 # type_of_annotation = ["staves"]
 
-type_of_annotation = ["system_measures", "staves"]
+# type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
@@ -39,9 +39,7 @@ DataLoader().show_data(muscima_data, type_of_annotation)
 
 # %%
 json_path = os.path.join(root_dir, "AudioLabs_" + json_pathname_extension + ".json")
-
 audioLabs_data = DataLoader().load_from_json(json_path)
-DataLoader().show_data(audioLabs_data, type_of_annotation)
 
 # %%
 def registerDataset(data_name, d, data, classes):
@@ -79,7 +77,12 @@ def setup_cfg(train_data_name, test_data_name, num_classes, model_output_dir, cf
     cfg.DATASETS.TRAIN = (train_data_name,)
     cfg.DATASETS.TEST = (test_data_name,)
 
-    cfg.DATALOADER.NUM_WORKERS = 0 # Number of data loading threads
+    # TODO: how about unix / mac?
+    if sys.platform.startswith("linux"):
+        cfg.DATALOADER.NUM_WORKERS = 4 # Number of data loading threads
+    else:
+        # has to be 0 for windows see: https://github.com/pytorch/pytorch/issues/2341
+        cfg.DATALOADER.NUM_WORKERS = 0 # Number of data loading threads
 
     cfg.MODEL.WEIGHTS = existing_model_weight_path
 
@@ -99,6 +102,7 @@ def setup_cfg(train_data_name, test_data_name, num_classes, model_output_dir, cf
 # %%
 network_type = "R_50_FPN_3x"
 # network_type = "R_101_FPN_3x"
+# network_type = "X_101_32x8d_FPN_3x"
 
 model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
 
