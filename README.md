@@ -13,31 +13,61 @@ Will download the datasets from the OMR-Datasets repository,
 download all the trained models as specified in the overview and  
 generate the json annotations for the datasets.
 
-## Faster R-CNN and ResNet-50 backbone
-|   Model Name        |   Iterations  |    mAP   |    AP75  |    AP50  |
-|:-------------------:|:-------------:|:--------:|:--------:|:--------:|
-|   System measures   |     5700      |  95.578  |  98.952  |  98.970  |
-|   Stave measures    |     9000      |  87.510  |  96.744  |  98.020  |
-|      Staves         |     5700      |  93.173  |  100.00  |  100.00  |
-|      Combined       |     TODO      |  TODO  |  TODO  |  TODO  |
+## Faster R-CNN with ResNet-50 backbone
+|   Model Name        					|   Iterations  |   mAP    |   AP75   |   AP50   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|
+|   System measures   					|     16500     |  96.547  |  98.935  |  98.970  |
+|   Stave measures    					|     16200     |  88.168  |  96.860  |  98.013  |
+|      Staves         					|     10800     |  93.596  |  98.987  |  100.00  |
 
-## scores for the combined dataset per category
-| Category        | mAP    | Category       | mAP    | Category   | mAP    |
-|:---------------:|:------:|:--------------:|:------:|:----------:|:------:|
-| system_measures | TODO | stave_measures | TODO | staves     | TODO |
+## scores for System measures and Staves combined
+|   Model Name        					|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP |  staves mAP   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|
+| System measures and Staves            |     15000     |  90.792  |  96.481  |  96.500  |       95.532        |    86.053     |
 
-## Faster R-CNN and ResNet-101 backbone
-|   Model Name        |   Iterations  |    mAP   |    AP75  |    AP50  |
-|:-------------------:|:-------------:|:--------:|:--------:|:--------:|
-|   System measures   |     8700      |  96.401  |  98.864  |  98.909  |
-|   Stave measures    |     6300      |  87.476  |  96.823  |  98.020  |
-|      Staves         |     15600     |  94.293  |  100.00  |  100.00  |
-|      Combined       |     TODO      |  TODO  |  TODO  |  TODO  |
+## scores for System measures, Stave measures and Staves combined
+|   Model Name        			   	    	|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP | stave measures mAP |  staves mAP   |
+|:-----------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:------------------:|:-------------:|
+| System measures Stave measures and Staves |     4500      |  77.779  |  86.884  |  87.404  |       90.010        |      78.622        |    64.706     |
 
-## scores for the combined dataset per category
-| Category        | mAP    | Category       | mAP    | Category   | mAP    |
-|:---------------:|:------:|:--------------:|:------:|:----------:|:------:|
-| system_measures | TODO | stave_measures | TODO | staves     | TODO |
+
+
+## Faster R-CNN with ResNet-101 backbone
+|   Model Name        					|   Iterations  |   mAP    |   AP75   |   AP50   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|
+|   System measures   					|     19500     |  97.112  |  98.928  |  98.949  |
+|   Stave measures    					|     17100     |  89.254  |  97.903  |  98.018  |
+|      Staves         					|     10800     |  93.596  |  98.987  |  100.00  |
+
+## scores for System measures and Staves combined
+|   Model Name        					|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP |  staves mAP   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|
+| System measures and Staves            |     18300     |  91.301  |  96.478  |  96.498  |       95.768        |    86.834     |
+
+## scores for System measures, Stave measures and Staves combined
+|   Model Name        			   	    	|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP | stave measures mAP |  staves mAP   |
+|:-----------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:------------------:|:-------------:|
+| System measures Stave measures and Staves |     2700      |  77.829  |  88.697  |  89.366  |       85.383        |      79.779        |    68.324     |
+
+
+<!-- STILL NEEDS TO BE TRAINED
+## Faster R-CNN with ResNeXt-101-32x8d backbone
+|   Model Name        					|   Iterations  |   mAP    |   AP75   |   AP50   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|
+|   System measures   					|     19500     |  97.112  |  98.928  |  98.949  |
+|   Stave measures    					|     17100     |  89.254  |  97.903  |  98.018  |
+|      Staves         					|     18000     |  94.004  |  99.010  |  100.00  |
+
+## scores for System measures and Staves combined
+|   Model Name        					|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP |  staves mAP   |
+|:-------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|
+| System measures and Staves            |     18300     |  91.301  |  96.478  |  96.498  |       95.768        |    86.834     |
+
+## scores for System measures, Stave measures and Staves combined
+|   Model Name        			   	    	|   Iterations  |    mAP   |   AP75   |   AP50   | system measures mAP | stave measures mAP |  staves mAP   |
+|:-----------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:------------------:|:-------------:|
+| System measures Stave measures and Staves |     2700      |  77.829  |  88.697  |  89.366  |       85.383        |      79.779        |    68.324     |
+-->
 
 # Installation Setup
 
