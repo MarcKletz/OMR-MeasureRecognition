@@ -13,6 +13,7 @@ from detectron2.utils.logger import setup_logger
 import detectron2.utils.comm as comm
 
 # TODO: do not delete current but prev model because current would be nice to begin training from again
+# TODO : Best loss does not acutally load as best loss when training is stopped and picked up again
 class LossEvalHook(HookBase):
     def __init__(self, cfg, val_period, model, scheduler, data_loader):
         self._threshold = 0.005 # this threshold has to be surpassed for the mean_loss

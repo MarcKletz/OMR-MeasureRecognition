@@ -112,7 +112,7 @@ git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # to pull detectron ve
 
 Step 3:  
 change the following line in detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp(483):  
-localtime_r(&rawtime, &local_time) to localtime_s(&local_time, &rawtime);  
+localtime_r(&rawtime, &local_time) to localtime_s(&local_time, &rawtime);
 solution from : https://github.com/conansherry/detectron2/issues/2  
 
 Step 4:  

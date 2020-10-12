@@ -3,8 +3,8 @@ import streamlit as st
 import os
 import json
 
-class MetricsVisualiser:
-    def visualiseMetrics(self, root_dir, network_type, type_of_annotation):
+class MetricsVisualizer:
+    def visualizeMetrics(self, root_dir, network_type, type_of_annotation):
         json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
 
         model = network_type + "-" + json_pathname_extension
@@ -26,6 +26,7 @@ class MetricsVisualiser:
         for scalar in scalars:
             if scalar == "iteration":
                 continue
+            fig, axes = plt.subplots()
             fig = plt.figure(figsize=(10,5))
             axes = fig.add_axes([.25,.25,.75,.75])
 
@@ -35,10 +36,11 @@ class MetricsVisualiser:
             )
             plt.legend([scalar], loc="best")
             if st._is_running_with_streamlit:
-                st.pyplot()
+                st.pyplot(fig)
             else:
                 plt.show()
 
+        fig, axes = plt.subplots()
         fig = plt.figure(figsize=(10,5))
         axes = fig.add_axes([.25,.25,.75,.75])
         plt.plot(
@@ -49,6 +51,6 @@ class MetricsVisualiser:
             [x['validation_loss'] for x in metrics if 'validation_loss' in x])
         plt.legend(['total_loss', 'validation_loss'], loc='upper right')
         if st._is_running_with_streamlit:
-            st.pyplot()
+            st.pyplot(fig)
         else:
             plt.show()

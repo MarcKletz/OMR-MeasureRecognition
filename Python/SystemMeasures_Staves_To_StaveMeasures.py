@@ -205,8 +205,9 @@ def get_system_bounds(system_measures):
 def is_in_system(stave, system):
     # stave in format left, top, right, bottom, idx
     # system in format: idx, left , top, right, bottom
-    bool_test = system[2]-10 < stave[1] and system[4]+10 > stave[3]
-    return system[2]-10 < stave[1] and system[4]+10 > stave[3]
+    threshold = 10
+    bool_test = system[2]-threshold < stave[1] and system[4]+threshold > stave[3]
+    return system[2]-threshold < stave[1] and system[4]+threshold > stave[3]
 
 # %%
 # now convert system measures and staves into stave measures for the image:

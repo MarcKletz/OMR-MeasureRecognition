@@ -20,7 +20,7 @@ from detectron2.engine import DefaultPredictor
 
 from CustomVisualizer import CustomVisualizer
 from DataLoader import DataLoader
-from MetricsVisualiser import MetricsVisualiser
+from MetricsVisualizer import MetricsVisualizer
 
 """
 # OMR Measure Recognition
@@ -81,21 +81,22 @@ def display_metrics(model, type_of_annotation):
     if type_of_annotation == "model ensemble":
         for c in all_classes:
             st.markdown("# " + c)
-            MetricsVisualiser().visualiseMetrics(root_dir, model, [c])
+            MetricsVisualizer().visualizeMetrics(root_dir, model, [c])
     else:
         metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
         st.markdown("# " + type_of_annotation)
-        MetricsVisualiser().visualiseMetrics(root_dir, model, metrics_type_annotations)
+        MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations)
 
 def handle_model_ensemble(model, display_original_image):
-    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"])
+    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
     if img_file_buffer == None:
         return
     for c in all_classes:
         model_dir = os.path.join(root_dir, "Models", model + "-" + c)
         cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
-        weight_file = "final_" + c + "_model.pth"
-        path_to_weight_file = os.path.join(model_dir, weight_file)
+        weight_file = os.path.join(model_dir, "last_checkpoint")
+        last_checkpoint = open(weight_file, "r").read()
+        path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
 
         cfg = setup_cfg(1, cfg_file, path_to_weight_file)
         predictor = DefaultPredictor(cfg)
@@ -109,8 +110,9 @@ def handle_model_ensemble(model, display_original_image):
 def handle_standard_prediction(model, display_original_image, type_of_annotation):
     model_dir = os.path.join(root_dir, "Models", model + "-" + type_of_annotation)
     cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
-    weight_file = "final_" + type_of_annotation + "_model.pth"
-    path_to_weight_file = os.path.join(model_dir, weight_file)
+    weight_file = os.path.join(model_dir, "last_checkpoint")
+    last_checkpoint = open(weight_file, "r").read()
+    path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
     display_multiple_classes = False
 
     which_classes = []
@@ -122,7 +124,7 @@ def handle_standard_prediction(model, display_original_image, type_of_annotation
         cfg = setup_cfg(1, cfg_file, path_to_weight_file)
     predictor = DefaultPredictor(cfg)
 
-    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"])
+    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
     if img_file_buffer == None:
         return
 
@@ -139,7 +141,6 @@ def predict_image(predictor, img_file, display_original_image, display_multiple_
 
     im = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     outputs = predictor(im)
-    # v = CustomVisualizer(im[:, :, ::-1], scale=1)
 
     if display_multiple_classes:
         for c in which_classes:
@@ -164,12 +165,6 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     # set the testing threshold for this model. Model should be at least 20% confident detection is correct
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2
     cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.2
-
-    # Set seed to negative to fully randomize everything.
-    # Set seed to positive to use a fixed seed. Note that a fixed seed increases
-    # reproducibility but does not guarantee fully deterministic behavior.
-    # Disabling all parallelism further increases reproducibility.
-    cfg.SEED = 1
 
     return cfg
 
