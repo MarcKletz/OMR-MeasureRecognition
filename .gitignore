@@ -6,3 +6,4 @@ events.out.*
 .dockerignore
 Dockerfile
 SetupUbuntu.sh
+testing.py
