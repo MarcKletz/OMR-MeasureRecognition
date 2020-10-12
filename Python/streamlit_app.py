@@ -49,9 +49,14 @@ def main():
 
         if(len(img_file_buffer) > 0):
             if type_of_annotation == "model ensemble":
-                handle_model_ensemble(img_file_buffer, model, display_original_image)
+                handle_prediction(img_file_buffer, model, display_original_image, all_classes)
             else:
-                handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation)
+                handle_prediction(img_file_buffer, model, display_original_image, [type_of_annotation])
+
+            # if type_of_annotation == "model ensemble":
+            #     handle_model_ensemble(img_file_buffer, model, display_original_image)
+            # else:
+            #     handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation)
     elif what_do == "Download predictions":
         display_metrics(model, type_of_annotation, with_visualizer=False)
         
@@ -139,41 +144,33 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
             st.markdown("# " + type_of_annotation)
             MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations)
 
-def handle_model_ensemble(img_file_buffer, model, display_original_image):
-    for c in all_classes:
-        model_dir = os.path.join(root_dir, "Models", model + "-" + c)
+def handle_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
+    for category in type_of_annotation:
+        model_dir = os.path.join(root_dir, "Models", model + "-" + category)
         cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
         weight_file = os.path.join(model_dir, "last_checkpoint")
         last_checkpoint = open(weight_file, "r").read()
         path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
 
-        cfg = setup_cfg(1, cfg_file, path_to_weight_file)
+        nr_of_classes = 1
+        which_classes = []
+        display_multiple_classes = False
+        if category == "system_measures-staves":
+            nr_of_classes = 2
+            which_classes = [0,1]
+            display_multiple_classes = True
+        elif category == "system_measures-stave_measures-staves":
+            nr_of_classes = 3
+            which_classes = [0,1,2]
+            display_multiple_classes = True
+
+        cfg = setup_cfg(nr_of_classes, cfg_file, path_to_weight_file)
         predictor = DefaultPredictor(cfg)
 
         for img_file in img_file_buffer:
-            predict_image(predictor, img_file, display_original_image, custom_message=c)
+            predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes)
 
-def handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
-    model_dir = os.path.join(root_dir, "Models", model + "-" + type_of_annotation)
-    cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
-    weight_file = os.path.join(model_dir, "last_checkpoint")
-    last_checkpoint = open(weight_file, "r").read()
-    path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
-    display_multiple_classes = False
-
-    which_classes = []
-    if type_of_annotation == "system_measures-stave_measures-staves":
-        cfg = setup_cfg(3, cfg_file, path_to_weight_file)
-        display_multiple_classes = True
-        which_classes = [all_classes.index(x) for x in type_of_annotation.split("-") if x in all_classes]
-    else:
-        cfg = setup_cfg(1, cfg_file, path_to_weight_file)
-    predictor = DefaultPredictor(cfg)
-
-    for img_file in img_file_buffer:
-        predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes)
-
-def predict_image(predictor, img_file, display_original_image, display_multiple_classes=False, which_classes=[], custom_message=""):
+def predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes):
     image = Image.open(img_file).convert("RGB")
     if display_original_image:
         st.image(image, "Your uploaded image", use_column_width=True)
@@ -185,11 +182,11 @@ def predict_image(predictor, img_file, display_original_image, display_multiple_
         for c in which_classes:
             v = CustomVisualizer(im[:, :, ::-1], scale=1)
             v = v.draw_instance_predictions(outputs["instances"].to("cpu"), [c])
-            st.image(v.get_image()[:, :, ::-1], "The " + all_classes[c] + " predictions of the network", use_column_width=True)
+            st.image(v.get_image()[:, :, ::-1], use_column_width=True)
 
     v = CustomVisualizer(im[:, :, ::-1], scale=1)
     v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    st.image(v.get_image()[:, :, ::-1], "All " + custom_message + " predictions of the network", use_column_width=True)
+    st.image(v.get_image()[:, :, ::-1], use_column_width=True)
 
 def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     cfg = get_cfg()
