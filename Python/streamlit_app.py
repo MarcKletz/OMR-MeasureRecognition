@@ -33,26 +33,34 @@ all_classes = ["system_measures", "stave_measures", "staves"]
 def main():
     DataLoader().download_trained_models(root_dir)
 
-    st.set_option('deprecation.showfileUploaderEncoding', False)
     st.sidebar.title("What to do")
 
-    what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference"])
+    what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference", "Download predictions"])
     model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x"])
     type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
         ["staves", "system_measures", "stave_measures", "system_measures-stave_measures-staves", "model ensemble"])
 
+    img_file_buffer = st.file_uploader("Upload image(s)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
+
     if what_do == "Show metrics":
         display_metrics(model, type_of_annotation)
-        
     elif what_do == "Inference":
         display_original_image = st.sidebar.checkbox("Display the original image(s)", False)
 
         if type_of_annotation == "model ensemble":
-            handle_model_ensemble(model, display_original_image)
+            handle_model_ensemble(img_file_buffer, model, display_original_image)
         else:
-            handle_standard_prediction(model, display_original_image, type_of_annotation)
+            handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation)
+    elif what_do == "Download predictions":
+        display_metrics(model, type_of_annotation, with_visualizer=False)
+        if st.sidebar.button("Download predicted annotations as CSV."):
+            st.write("YEY")
+            # download_predictions_as_csv()
+        if st.sidebar.button("Download predicted annotaions as JSON."):
+            st.write("ANOTHER YEY")
+            # download_predictions_as_json()
 
-def display_metrics(model, type_of_annotation):
+def display_metrics(model, type_of_annotation, with_visualizer=True):
     df = pd.DataFrame(columns=["Model Name", "Iterations", "mAP", "AP75", "AP50"])
     df.style.format({"E" : "{:.3%}"})
     if model == "R_50_FPN_3x":
@@ -78,19 +86,17 @@ def display_metrics(model, type_of_annotation):
     elif type_of_annotation == "model ensemble":
         st.table(df.set_index("Model Name"))
     
-    if type_of_annotation == "model ensemble":
-        for c in all_classes:
-            st.markdown("# " + c)
-            MetricsVisualizer().visualizeMetrics(root_dir, model, [c])
-    else:
-        metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
-        st.markdown("# " + type_of_annotation)
-        MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations)
+    if(with_visualizer):
+        if type_of_annotation == "model ensemble":
+            for c in all_classes:
+                st.markdown("# " + c)
+                MetricsVisualizer().visualizeMetrics(root_dir, model, [c])
+        else:
+            metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
+            st.markdown("# " + type_of_annotation)
+            MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations)
 
-def handle_model_ensemble(model, display_original_image):
-    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
-    if img_file_buffer == None:
-        return
+def handle_model_ensemble(img_file_buffer, model, display_original_image):
     for c in all_classes:
         model_dir = os.path.join(root_dir, "Models", model + "-" + c)
         cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
@@ -107,7 +113,7 @@ def handle_model_ensemble(model, display_original_image):
         else:
             predict_image(predictor, img_file_buffer, display_original_image, custom_message=c)
 
-def handle_standard_prediction(model, display_original_image, type_of_annotation):
+def handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
     model_dir = os.path.join(root_dir, "Models", model + "-" + type_of_annotation)
     cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
     weight_file = os.path.join(model_dir, "last_checkpoint")
@@ -123,10 +129,6 @@ def handle_standard_prediction(model, display_original_image, type_of_annotation
     else:
         cfg = setup_cfg(1, cfg_file, path_to_weight_file)
     predictor = DefaultPredictor(cfg)
-
-    img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"], accept_multiple_files=True)
-    if img_file_buffer == None:
-        return
 
     if isinstance(img_file_buffer, list):
         for img_file in img_file_buffer:
