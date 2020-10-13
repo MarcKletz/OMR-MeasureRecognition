@@ -1,4 +1,4 @@
-sudo apt-get update
-sudo apt-get install build-essential
-sudo apt-get install python3-dev
-sudo apt install python3-opencv
+# debian dependencies for the streamlit app
+sudo apt update
+sudo apt install build-essential
+sudo apt install python3-dev
