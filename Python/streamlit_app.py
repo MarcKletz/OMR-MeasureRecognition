@@ -1,7 +1,7 @@
 import pathlib
 import random
 import string
-import stat
+import shutil
 
 import io
 from PIL import Image
@@ -225,6 +225,7 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
 
     if not torch.cuda.is_available():
         st.write("NO NVIDIA GPU FOUND - fallback to CPU")
+        st.write("This will be rather slow!")
         cfg.MODEL.DEVICE = "cpu"
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
     # set the testing threshold for this model. Model should be at least 20% confident detection is correct
@@ -244,7 +245,6 @@ def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, use
             json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
             with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
-            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
     elif "system_measures-stave_measures-staves" in type_of_annotation:
         cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
         cfg = setup_cfg(3, cfg_file, path_to_weight_file)
@@ -255,7 +255,6 @@ def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, use
             json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
             with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
-            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
     else:
         for img_file in img_file_buffer:
             json_dict = {}
@@ -265,11 +264,12 @@ def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, use
                 predictor = DefaultPredictor(cfg)
 
                 json_dict = generate_JSON_single_category(json_dict, img_file, predictor, category)
-            json_pathname_extension = type_of_annotation[0] if len(type_of_annotation) == 1 else "combined"
             json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
             with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
-            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
+
+    shutil.make_archive(user_folder, "zip", user_folder)
+    st.markdown("Download [" + user_folder_input + ".zip](downloads/" + user_folder_input + ".zip)")
 
 
 def generate_JSON_single_category(json_dict, img_file, predictor, annotation_type):
