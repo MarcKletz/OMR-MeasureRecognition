@@ -74,6 +74,9 @@ def main():
 
             user_folder = (STREAMLIT_STATIC_PATH / user_folder_input)
             
+            if not os.path.exists(STREAMLIT_STATIC_PATH):
+                os.mkdir(STREAMLIT_STATIC_PATH)
+
             if os.path.exists(user_folder):
                 st.write("FOLDER PATH ALREADY EXISTS - WE WILL NOW CLEAR THIS FOLDER")
                 for f in os.listdir(user_folder):
