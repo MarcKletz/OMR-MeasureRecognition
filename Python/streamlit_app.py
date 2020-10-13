@@ -1,3 +1,8 @@
+import pathlib
+import random
+import string
+import stat
+
 import io
 from PIL import Image
 import streamlit as st
@@ -31,6 +36,10 @@ by Marc Kletz
 root_dir = "./Data"
 all_classes = ["system_measures", "stave_measures", "staves"]
 
+# HACK This only works when we've installed streamlit with pipenv, so the
+# permissions during install are the same as the running process
+STREAMLIT_STATIC_PATH = pathlib.Path(st.__path__[0]) / 'static' / 'downloads'
+
 def main():
     DataLoader().download_trained_models(root_dir)
 
@@ -55,14 +64,30 @@ def main():
                 handle_prediction(img_file_buffer, model, display_original_image, [type_of_annotation])
     elif what_do == "Download predictions":
         display_metrics(model, type_of_annotation, with_visualizer=False)
+
+        user_folder_input = st.sidebar.text_input("Folder name (where your generated JSON will be written to - if no value is given, we generate a random string)", max_chars=25)
         
-        if st.sidebar.button("Download predicted annotations as JSON."):
-            if type_of_annotation == "model ensemble":
-                download_predictions_as_json(img_file_buffer, model, all_classes)
+        if st.sidebar.button("Generate predicted annotations as JSON."):
+            if user_folder_input == "":
+                st.write("FOLDER NAME IS EMPTY - GENERATING RANDOM STRING")
+                user_folder_input = ''.join(random.choice(string.ascii_lowercase) for i in range(25))
+
+            user_folder = (STREAMLIT_STATIC_PATH / user_folder_input)
+            
+            if os.path.exists(user_folder):
+                st.write("FOLDER PATH ALREADY EXISTS - WE WILL NOW CLEAR THIS FOLDER")
+                for f in os.listdir(user_folder):
+                    os.remove(os.path.join(user_folder, f))
             else:
-                download_predictions_as_json(img_file_buffer, model, [type_of_annotation])
+                os.mkdir(user_folder)
+
+            if type_of_annotation == "model ensemble":
+                generate_predictions_as_json(img_file_buffer, model, all_classes, user_folder_input, user_folder)
+            else:
+                generate_predictions_as_json(img_file_buffer, model, [type_of_annotation], user_folder_input, user_folder)
 
         """
+        ..........................................................................................................  
         One JSON file will be generated for each image.  
         The file name will have the same as the image name with the category appended.  
         Example: File_1-staves.json\n
@@ -208,11 +233,7 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
 
     return cfg
 
-def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
-    custom_annotation_dir = os.path.join(root_dir, "Custom_annotations")
-    if not os.path.exists(custom_annotation_dir):
-        os.mkdir(custom_annotation_dir)
-
+def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, user_folder_input, user_folder):
     if "system_measures-staves" in type_of_annotation:
         cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
         cfg = setup_cfg(2, cfg_file, path_to_weight_file)
@@ -220,8 +241,10 @@ def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
 
         for img_file in img_file_buffer:
             json_dict = generate_JSON_multiple_category(img_file, predictor, 1)
-            with open(os.path.join(custom_annotation_dir, img_file.name + "-" + type_of_annotation[0] + ".json"), "w", encoding="utf8") as outfile:
+            json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
+            with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
     elif "system_measures-stave_measures-staves" in type_of_annotation:
         cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
         cfg = setup_cfg(3, cfg_file, path_to_weight_file)
@@ -229,8 +252,10 @@ def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
 
         for img_file in img_file_buffer:
             json_dict = generate_JSON_multiple_category(img_file, predictor, 2)
-            with open(os.path.join(custom_annotation_dir, img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"), "w", encoding="utf8") as outfile:
+            json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
+            with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
     else:
         for img_file in img_file_buffer:
             json_dict = {}
@@ -241,11 +266,10 @@ def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
 
                 json_dict = generate_JSON_single_category(json_dict, img_file, predictor, category)
             json_pathname_extension = type_of_annotation[0] if len(type_of_annotation) == 1 else "combined"
-            with open(os.path.join(custom_annotation_dir, img_file.name.split(".")[0] + "-" + json_pathname_extension + ".json"), "w", encoding="utf8") as outfile:
+            json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
+            with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
-
-    st.markdown("<h2>Created files in " + custom_annotation_dir + "</h2>", unsafe_allow_html=True)
-    st.write("")
+            st.markdown("Download [" + json_file_name + "](" + user_folder_input + "/" + json_file_name + ")")
 
 
 def generate_JSON_single_category(json_dict, img_file, predictor, annotation_type):
