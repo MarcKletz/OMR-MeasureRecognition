@@ -258,7 +258,7 @@ def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, use
             json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
             with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
-    else:
+    elif type_of_annotation == all_classes:
         for img_file in img_file_buffer:
             json_dict = {}
             for category in type_of_annotation:
@@ -267,6 +267,17 @@ def generate_predictions_as_json(img_file_buffer, model, type_of_annotation, use
                 predictor = DefaultPredictor(cfg)
 
                 json_dict = generate_JSON_single_category(json_dict, img_file, predictor, category)
+            json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
+            with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
+                json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+    else:
+        cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
+        cfg = setup_cfg(1, cfg_file, path_to_weight_file)
+        predictor = DefaultPredictor(cfg)
+
+        for img_file in img_file_buffer:
+            json_dict = {}
+            json_dict = generate_JSON_single_category(json_dict, img_file, predictor, type_of_annotation[0])
             json_file_name = img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"
             with open(os.path.join(user_folder, json_file_name), "w", encoding="utf8") as outfile:
                 json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
