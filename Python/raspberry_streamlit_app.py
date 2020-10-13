@@ -24,7 +24,7 @@ from detectron2.engine import DefaultPredictor
 
 from CustomVisualizer import CustomVisualizer
 from DataLoader import DataLoader
-from MetricsVisualiser import MetricsVisualiser
+from MetricsVisualizer import MetricsVisualizer
 
 """
 # OMR Measure Recognition
@@ -85,11 +85,11 @@ def display_metrics(model, type_of_annotation):
     if type_of_annotation == "model ensemble":
         for c in all_classes:
             st.markdown("# " + c)
-            MetricsVisualiser().visualiseMetrics(root_dir, model, [c])
+            MetricsVisualizer().visualiseMetrics(root_dir, model, [c])
     else:
         metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
         st.markdown("# " + type_of_annotation)
-        MetricsVisualiser().visualiseMetrics(root_dir, model, metrics_type_annotations)
+        MetricsVisualizer().visualiseMetrics(root_dir, model, metrics_type_annotations)
 
 def handle_model_ensemble(model, display_original_image):
     img_file_buffer = st.file_uploader("Upload an image(s)", type=["png", "jpg", "jpeg"])

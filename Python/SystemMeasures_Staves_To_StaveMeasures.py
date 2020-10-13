@@ -18,7 +18,7 @@ from detectron2.engine import DefaultTrainer
 
 from CustomVisualizer import CustomVisualizer
 from DataLoader import DataLoader
-from MetricsVisualiser import MetricsVisualiser
+from MetricsVisualizer import MetricsVisualizer
 from ImageDisplayer import ImageDisplayer
 
 # %%

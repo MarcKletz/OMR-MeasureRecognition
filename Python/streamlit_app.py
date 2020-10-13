@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import cv2
 import os
+import json
 
 # import some detectron2 utilities
 import detectron2
@@ -52,20 +53,19 @@ def main():
                 handle_prediction(img_file_buffer, model, display_original_image, all_classes)
             else:
                 handle_prediction(img_file_buffer, model, display_original_image, [type_of_annotation])
-
-            # if type_of_annotation == "model ensemble":
-            #     handle_model_ensemble(img_file_buffer, model, display_original_image)
-            # else:
-            #     handle_standard_prediction(img_file_buffer, model, display_original_image, type_of_annotation)
     elif what_do == "Download predictions":
         display_metrics(model, type_of_annotation, with_visualizer=False)
         
-        # if st.sidebar.button("Download predicted annotations as JSON."):
-        #     download_predictions_as_json(img_file_buffer, model, type_of_annotation)
+        if st.sidebar.button("Download predicted annotations as JSON."):
+            if type_of_annotation == "model ensemble":
+                download_predictions_as_json(img_file_buffer, model, all_classes)
+            else:
+                download_predictions_as_json(img_file_buffer, model, [type_of_annotation])
 
         """
         One JSON file will be generated for each image.  
-        The file name will be the same as the image name.  
+        The file name will have the same as the image name with the category appended.  
+        Example: File_1-staves.json\n
         Categories are the type of annotation selected: staves or sytem measures or stave measures or one of the joined categories.  
         Multiple categories will still be annotated in the same JSON as seen below.  
         The contents of the file will be in the following structure:  
@@ -77,28 +77,28 @@ def main():
         \t\t{
         \t\t\t\"left\": <bounding_box_1_left>
         \t\t\t\"top\": <bounding_box_1_top>
-        \t\t\t\"height\": <bounding_box_1_height>
-        \t\t\t\"width\": <bounding_box_1_width>
+        \t\t\t\"right\": <bounding_box_1_right>
+        \t\t\t\"bottom\": <bounding_box_1_bottom>
         \t\t},
         \t\t{
         \t\t\t\"left\": <bounding_box_2_left>
         \t\t\t\"top\": <bounding_box_2_top>
-        \t\t\t\"height\": <bounding_box_2_height>
-        \t\t\t\"width\": <bounding_box_2_width>
+        \t\t\t\"right\": <bounding_box_2_right>
+        \t\t\t\"bottom\": <bounding_box_2_bottom>
         \t\t}
         \t],
         \t\"<category_2>\": [
         \t\t{
         \t\t\t\"left\": <bounding_box_1_left>
         \t\t\t\"top\": <bounding_box_1_top>
-        \t\t\t\"height\": <bounding_box_1_height>
-        \t\t\t\"width\": <bounding_box_1_width>
+        \t\t\t\"right\": <bounding_box_1_right>
+        \t\t\t\"bottom\": <bounding_box_1_bottom>
         \t\t},
         \t\t{
         \t\t\t\"left\": <bounding_box_2_left>
         \t\t\t\"top\": <bounding_box_2_top>
-        \t\t\t\"height\": <bounding_box_2_height>
-        \t\t\t\"width\": <bounding_box_2_width>
+        \t\t\t\"right\": <bounding_box_2_right>
+        \t\t\t\"bottom\": <bounding_box_2_bottom>
         \t\t}
         \t]
         }
@@ -146,11 +146,7 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
 
 def handle_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
     for category in type_of_annotation:
-        model_dir = os.path.join(root_dir, "Models", model + "-" + category)
-        cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
-        weight_file = os.path.join(model_dir, "last_checkpoint")
-        last_checkpoint = open(weight_file, "r").read()
-        path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
+        cfg_file, path_to_weight_file = prepare_cfg_variables(model, category) 
 
         nr_of_classes = 1
         which_classes = []
@@ -169,6 +165,14 @@ def handle_prediction(img_file_buffer, model, display_original_image, type_of_an
 
         for img_file in img_file_buffer:
             predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes)
+
+def prepare_cfg_variables(model, category):
+    model_dir = os.path.join(root_dir, "Models", model + "-" + category)
+    cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
+    weight_file = os.path.join(model_dir, "last_checkpoint")
+    last_checkpoint = open(weight_file, "r").read()
+    path_to_weight_file = os.path.join(model_dir, last_checkpoint)
+    return cfg_file, path_to_weight_file
 
 def predict_image(predictor, img_file, display_original_image, display_multiple_classes, which_classes):
     image = Image.open(img_file).convert("RGB")
@@ -204,28 +208,137 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
 
     return cfg
 
-# def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
-#     if type_of_annotation == "model ensemble":
-#         st.write("Later")
-#     elif type_of_annotation == "system_measures-stave_measures-staves":
-#         st.write("Later")
-#     else:
-#         model_dir = os.path.join(root_dir, "Models", model + "-" + type_of_annotation)
-#         cfg_file = "COCO-Detection/faster_rcnn_" + model + ".yaml"
-#         weight_file = os.path.join(model_dir, "last_checkpoint")
-#         last_checkpoint = open(weight_file, "r").read()
-#         path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
-#         cfg = setup_cfg(1, cfg_file, path_to_weight_file)
+def download_predictions_as_json(img_file_buffer, model, type_of_annotation):
+    custom_annotation_dir = os.path.join(root_dir, "Custom_annotations")
+    if not os.path.exists(custom_annotation_dir):
+        os.mkdir(custom_annotation_dir)
+
+    if "system_measures-staves" in type_of_annotation:
+        cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
+        cfg = setup_cfg(2, cfg_file, path_to_weight_file)
+        predictor = DefaultPredictor(cfg)
+
+        for img_file in img_file_buffer:
+            json_dict = generate_JSON_multiple_category(img_file, predictor, 1)
+            with open(os.path.join(custom_annotation_dir, img_file.name + "-" + type_of_annotation[0] + ".json"), "w", encoding="utf8") as outfile:
+                json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+    elif "system_measures-stave_measures-staves" in type_of_annotation:
+        cfg_file, path_to_weight_file = prepare_cfg_variables(model, type_of_annotation[0])
+        cfg = setup_cfg(3, cfg_file, path_to_weight_file)
+        predictor = DefaultPredictor(cfg)
+
+        for img_file in img_file_buffer:
+            json_dict = generate_JSON_multiple_category(img_file, predictor, 2)
+            with open(os.path.join(custom_annotation_dir, img_file.name.split(".")[0] + "-" + type_of_annotation[0] + ".json"), "w", encoding="utf8") as outfile:
+                json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+    else:
+        for img_file in img_file_buffer:
+            json_dict = {}
+            for category in type_of_annotation:
+                cfg_file, path_to_weight_file = prepare_cfg_variables(model, category) 
+                cfg = setup_cfg(1, cfg_file, path_to_weight_file)
+                predictor = DefaultPredictor(cfg)
+
+                json_dict = generate_JSON_single_category(json_dict, img_file, predictor, category)
+            json_pathname_extension = type_of_annotation[0] if len(type_of_annotation) == 1 else "combined"
+            with open(os.path.join(custom_annotation_dir, img_file.name.split(".")[0] + "-" + json_pathname_extension + ".json"), "w", encoding="utf8") as outfile:
+                json.dump(json_dict, outfile, indent=4, ensure_ascii=False)
+
+    st.markdown("<h2>Created files in " + custom_annotation_dir + "</h2>", unsafe_allow_html=True)
+    st.write("")
 
 
+def generate_JSON_single_category(json_dict, img_file, predictor, annotation_type):
+    image = Image.open(img_file).convert("RGB")
+    im = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    outputs = predictor(im)
+    all_boxes = outputs["instances"].pred_boxes.tensor.cpu().numpy() # left, top, right, bottom
 
+    json_dict["width"] = image.width
+    json_dict["height"] = image.height
 
-        # json_dict = {}
-        # json_dict["width"] = 
-        # json_dict["height"] = 
-        # system_measures = []
-        # measure_1 = {}
-        # json_dict["system_measures"] = system_measures
+    measures = []
+    for box in all_boxes:
+        annotation = {}
+        annotation["left"] = int(box[0].item())
+        annotation["top"] = int(box[1].item())
+        annotation["right"] = int(box[2].item())
+        annotation["bottom"] = int(box[3].item())
+        measures.append(annotation)
+
+    json_dict[annotation_type] = measures
+
+    return json_dict
+
+def generate_JSON_multiple_category(img_file, predictor, category):
+    image = Image.open(img_file).convert("RGB")
+    im = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    outputs = predictor(im)
+
+    all_boxes = outputs["instances"].pred_boxes.tensor.cpu().numpy() # left, top, right, bottom
+    all_classes = outputs["instances"].pred_classes.cpu().numpy()
+
+    # merge the boxes with the classes and sort by classes, because they dont have to be in order
+    box_classes = np.concatenate((all_boxes, np.array([all_classes]).T), axis=1)
+    sorted_box_classes = box_classes[box_classes[:,4].argsort()]
+
+    # get the boxes by classes but without the class column
+    system_boxes = None
+    stave_measure_boxes = None
+    stave_boxes = None
+
+    if category == 1:
+        system_indices = np.where(sorted_box_classes == 0)[0]
+        stave_indices = np.where(sorted_box_classes == 1)[0]
+
+        system_boxes = np.delete(sorted_box_classes[system_indices[0]:system_indices[-1]+1], 4, 1)
+        stave_boxes = np.delete(sorted_box_classes[stave_indices[0]:stave_indices[-1]+1], 4, 1)
+    elif category == 2:
+        system_indices = np.where(sorted_box_classes == 0)[0]
+        stave_measure_indices = np.where(sorted_box_classes == 1)[0]
+        stave_indices = np.where(sorted_box_classes == 2)[0]
+
+        system_boxes = np.delete(sorted_box_classes[system_indices[0]:system_indices[-1]+1], 4, 1)
+        stave_measure_boxes = np.delete(sorted_box_classes[stave_measure_indices[0]:stave_measure_indices[-1]+1], 4, 1)
+        stave_boxes = np.delete(sorted_box_classes[stave_indices[0]:stave_indices[-1]+1], 4, 1)
+
+    json_dict = {}
+    json_dict["width"] = image.width
+    json_dict["height"] = image.height
+
+    measures = []
+    for box in system_boxes:
+        annotation = {}
+        annotation["left"] = int(box[0].item())
+        annotation["top"] = int(box[1].item())
+        annotation["right"] = int(box[2].item())
+        annotation["bottom"] = int(box[3].item())
+        measures.append(annotation)
+    json_dict["system_measures"] = measures
+
+    if category == 2:
+        measures = []
+        for box in stave_measure_boxes:
+            annotation = {}
+            annotation["left"] = int(box[0].item())
+            annotation["top"] = int(box[1].item())
+            annotation["right"] = int(box[2].item())
+            annotation["bottom"] = int(box[3].item())
+            measures.append(annotation)
+        json_dict["stave_measures"] = measures
+
+    measures = []
+    for box in stave_boxes:
+        annotation = {}
+        annotation["left"] = int(box[0].item())
+        annotation["top"] = int(box[1].item())
+        annotation["right"] = int(box[2].item())
+        annotation["bottom"] = int(box[3].item())
+        measures.append(annotation)
+    json_dict["staves"] = measures
+
+    return json_dict
+
 
 if __name__ == "__main__":
     main()

@@ -24,7 +24,7 @@ from detectron2.engine import DefaultPredictor
 
 from CustomVisualizer import CustomVisualizer
 from DataLoader import DataLoader
-from MetricsVisualiser import MetricsVisualiser
+from MetricsVisualizer import MetricsVisualizer
 
 """
 # Streamlit test

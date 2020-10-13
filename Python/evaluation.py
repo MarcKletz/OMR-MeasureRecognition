@@ -11,7 +11,7 @@ from detectron2.engine import DefaultPredictor
 from detectron2.engine import DefaultTrainer
 
 from DataLoader import DataLoader
-from MetricsVisualiser import MetricsVisualiser
+from MetricsVisualizer import MetricsVisualizer
 
 # %%
 root_dir = "./../Data" # change this to download to a specific location on your pc
@@ -126,6 +126,6 @@ print(inference_on_dataset(trainer.model, val_loader, evaluator))
 print("model has been trained for :", trainer.start_iter, "iterations")
 
 #%%
-MetricsVisualiser().visualiseMetrics(root_dir, network_type, type_of_annotation)
+MetricsVisualizer().visualiseMetrics(root_dir, network_type, type_of_annotation)
 
 # %%
