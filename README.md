@@ -83,9 +83,12 @@ Instead of building it on your own, I recommend to install it with the following
 ```sudo apt install python3-opencv```  
 Dont forget to remove the opencv-python-headless requirement from the linux_requirements.txt if you did this!  
 
+**Debian:**
+Skip to Step 4  
+
 Step 4:  
 install all the required python libraries from this repository:  
-```sudo pip3 install -r Python/linux_requirements.txt [-v]```  
+```sudo pip3 install -r requirements.txt [-v]```
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
 
 ## For Windows:
@@ -100,7 +103,7 @@ https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Buil
 
 Step 1:  
 install all the required python libraries from the OMR-MeasureRecognition repo.  
-```pip install -r Python/windows_requirements.txt```
+```pip install -r windows_requirements.txt```
 
 Step 2:  
 manually install detectron2 because there is no windows support, we need to pull and install from source  
