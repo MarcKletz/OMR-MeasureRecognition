@@ -1,4 +1,3 @@
-# required packages for streamlit sharing
 sudo apt-get update
 sudo apt-get install build-essential
 sudo apt-get install python3-dev

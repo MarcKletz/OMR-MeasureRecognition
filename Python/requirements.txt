@@ -1,4 +1,3 @@
-# requirements file for streamlit
 matplotlib
 pandas
 omrdatasettools
