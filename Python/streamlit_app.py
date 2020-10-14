@@ -177,6 +177,7 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
 
 def handle_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
     for category in type_of_annotation:
+        st.write("Predictions from " + category)
         cfg_file, path_to_weight_file = prepare_cfg_variables(model, category) 
 
         nr_of_classes = 1
