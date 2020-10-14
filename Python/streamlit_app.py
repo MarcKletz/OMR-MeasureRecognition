@@ -55,6 +55,9 @@ def main():
     if what_do == "Show metrics":
         display_metrics(model, type_of_annotation)
     elif what_do == "Inference":
+        if not torch.cuda.is_available():
+            st.write("NO NVIDIA GPU FOUND - fallback to CPU")
+
         display_original_image = st.sidebar.checkbox("Display the original image(s)", False)
 
         if(len(img_file_buffer) > 0):
@@ -227,8 +230,6 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     cfg.MODEL.WEIGHTS = existing_model_weight_path
 
     if not torch.cuda.is_available():
-        st.write("NO NVIDIA GPU FOUND - fallback to CPU")
-        st.write("This will be rather slow!")
         cfg.MODEL.DEVICE = "cpu"
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = num_classes
     # set the testing threshold for this model. Model should be at least 20% confident detection is correct
