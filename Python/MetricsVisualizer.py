@@ -26,7 +26,8 @@ class MetricsVisualizer:
         for scalar in scalars:
             if scalar == "iteration":
                 continue
-            fig, axes = plt.subplots()
+            if st._is_running_with_streamlit:
+                fig, axes = plt.subplots()
             fig = plt.figure(figsize=(10,5))
             axes = fig.add_axes([.25,.25,.75,.75])
 
@@ -40,7 +41,8 @@ class MetricsVisualizer:
             else:
                 plt.show()
 
-        fig, axes = plt.subplots()
+        if st._is_running_with_streamlit:
+            fig, axes = plt.subplots()
         fig = plt.figure(figsize=(10,5))
         axes = fig.add_axes([.25,.25,.75,.75])
         plt.plot(

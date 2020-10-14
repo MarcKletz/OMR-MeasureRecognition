@@ -119,13 +119,14 @@ cfg = setup_cfg(train_data_name, test_data_name, len(type_of_annotation), model_
 trainer = DefaultTrainer(cfg)
 trainer.resume_or_load(resume=True)
 # %%
-evaluator = COCOEvaluator(val_data_name, cfg, False, output_dir=cfg.OUTPUT_DIR)
+tasks = ("bbox",)
+evaluator = COCOEvaluator(val_data_name, tasks, False, output_dir=cfg.OUTPUT_DIR)
 val_loader = build_detection_test_loader(cfg, val_data_name)
 print(inference_on_dataset(trainer.model, val_loader, evaluator))
 # %%
 print("model has been trained for :", trainer.start_iter, "iterations")
 
 #%%
-MetricsVisualizer().visualiseMetrics(root_dir, network_type, type_of_annotation)
+MetricsVisualizer().visualizeMetrics(root_dir, network_type, type_of_annotation)
 
 # %%

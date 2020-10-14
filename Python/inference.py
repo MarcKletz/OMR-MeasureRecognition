@@ -98,10 +98,10 @@ model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_
 
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
 
-weight_file = "final_" + json_pathname_extension + "_model.pth"
-# weight_file = "model_0000599.pth"
+weight_file = os.path.join(model_dir, "last_checkpoint")
+last_checkpoint = open(weight_file, "r").read()
 
-path_to_weight_file = os.path.join(model_dir, weight_file) 
+path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
 
 #%%
 cfg = setup_cfg(len(type_of_annotation), cfg_file, path_to_weight_file)

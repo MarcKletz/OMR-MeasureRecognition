@@ -110,18 +110,20 @@ manually install detectron2 because there is no windows support, we need to pull
 ```
 git clone https://github.com/facebookresearch/detectron2.git
 cd detectron2
-git reset --hard be792b959bca9af0aacfa04799537856c7a92802 # to pull detectron version 0.2.1
+git reset --hard 0130967d72346c520c9508620a6833fcef135cee # to pull the exact detectron version 0.2.1
 ```
 
 Step 3:  
-change the following line in detectron2\detectron2\layers\csrc\cocoeval\cocoeval.cpp(483):  
-localtime_r(&rawtime, &local_time) to localtime_s(&local_time, &rawtime);
-solution from : https://github.com/conansherry/detectron2/issues/2  
-
-Step 4:  
 now you can install detectron2 with:  
 ```python setup.py install```
 Requires admin privileges, so run cmd as admin!
+
+Possible step 4:  
+If step 3 fails with an error message about an nms_rotated_cuda.cu file, try this.  
+add the following line in detectron2\detectron2\layers\csrc\nms_rotated\nms_rotated_cuda.cu before #ifdef WITH_HIP:  
+#define WITH_HIP  
+Repead step 3.
+
 
 # Run the Streamlit app:
 

@@ -13,7 +13,7 @@ class CustomTrainer(DefaultTrainer):
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-        return COCOEvaluator(dataset_name, cfg, False, cfg.OUTPUT_DIR)
+        return COCOEvaluator(dataset_name, ("bbox",), False, cfg.OUTPUT_DIR)
                      
     def build_hooks(self):
         hooks = super().build_hooks()

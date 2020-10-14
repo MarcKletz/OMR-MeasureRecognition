@@ -35,11 +35,11 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # to decide which data should be loaded use this:
 
 # type_of_annotation = ["system_measures"]
-type_of_annotation = ["stave_measures"]
+# type_of_annotation = ["stave_measures"]
 # type_of_annotation = ["staves"]
 
 # type_of_annotation = ["system_measures", "staves"]
-# type_of_annotation = ["system_measures", "stave_measures", "staves"]
+type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
 
@@ -83,6 +83,7 @@ registerDataset(test_data_name, test_data_name, test_data, type_of_annotation)
 
 val_data_name = "val"
 registerDataset(val_data_name, val_data_name, val_data, type_of_annotation)
+
 
 # %%
 def setup_cfg(train_data_name, test_data_name, val_period, max_iter, num_classes, model_output_dir, cfg_file, existing_model_weight_path=None):
@@ -159,13 +160,13 @@ max_iter = 20000
 val_period = 300
 
 # smallest model, less AP, faster to train
-# network_type = "R_50_FPN_3x"
+network_type = "R_50_FPN_3x"
 
 # faster training, but slightly less AP, way smaller model (.pth) file
 # network_type = "R_101_FPN_3x"
 
 # slowest training, but best AP
-network_type = "X_101_32x8d_FPN_3x"
+# network_type = "X_101_32x8d_FPN_3x"
 
 model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
@@ -182,8 +183,9 @@ cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, 
 
 # %%
 # generate the coco annotations for the evaluator before the evaluator hook
-COCOEvaluator(test_data_name, cfg, False, output_dir=cfg.OUTPUT_DIR) 
-COCOEvaluator(val_data_name, cfg, False, output_dir=cfg.OUTPUT_DIR)
+tasks = ("bbox",)
+COCOEvaluator(test_data_name, tasks, False, output_dir=cfg.OUTPUT_DIR) 
+COCOEvaluator(val_data_name, tasks, False, output_dir=cfg.OUTPUT_DIR)
 
 # %%
 trainer = CustomTrainer(cfg, val_data_name, val_period)
