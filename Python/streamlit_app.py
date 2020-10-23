@@ -43,10 +43,10 @@ STREAMLIT_STATIC_PATH = pathlib.Path(st.__path__[0]) / 'static' / 'downloads'
 def main():
     DataLoader().download_trained_models(root_dir)
 
-    st.sidebar.title("What to do")
+    st.sidebar.title("Options")
 
     what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference", "Download predictions"])
-    model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d"])
+    model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"])
     type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
         ["staves", "system_measures", "stave_measures", "system_measures-staves", "system_measures-stave_measures-staves", "model ensemble"]) 
 
@@ -140,23 +140,23 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
     df = pd.DataFrame(columns=["Model Name", "Iterations", "mAP", "AP75", "AP50"])
     df.style.format({"E" : "{:.3%}"})
     if model == "R_50_FPN_3x":
-        df = df.append({"Model Name" : "System measures", "Iterations" : 16500, "mAP" : 96.547, "AP75" : 98.935, "AP50" : 98.970, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Stave measures", "Iterations" : 16200, "mAP" : 88.168, "AP75" : 96.860, "AP50" : 98.013, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Staves", "Iterations" : 10800, "mAP" : 93.596, "AP75" : 98.987, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 15000, "mAP" : 90.792, "AP75" : 96.481, "AP50" : 96.500, "system measures mAP" : 95.532, "staves mAP" : 86.053, "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 4500, "mAP" : 77.779, "AP75" : 86.884, "AP50" : 87.404, "system measures mAP" : 90.010, "staves mAP" : 78.622, "stave measures mAP" : 64.706}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures", "Iterations" : 16500, "mAP" : 96.352, "AP75" : 99.010, "AP50" : 99.010, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 16200, "mAP" : 88.003, "AP75" : 97.791, "AP50" : 98.020, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Staves", "Iterations" : 10800, "mAP" : 93.387, "AP75" : 100.00, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 15000, "mAP" : 90.746, "AP75" : 96.526, "AP50" : 96.532, "system measures mAP" : 95.487, "staves mAP" : 86.004, "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 4500, "mAP" : 77.485, "AP75" : 86.905, "AP50" : 87.103, "system measures mAP" : 89.909, "staves mAP" : 78.344, "stave measures mAP" : 64.202}, ignore_index=True)
     elif model == "R_101_FPN_3x":
-        df = df.append({"Model Name" : "System measures", "Iterations" : 19500, "mAP" : 97.112, "AP75" : 98.928, "AP50" : 98.949, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Stave measures", "Iterations" : 17100, "mAP" : 89.254, "AP75" : 97.903, "AP50" : 98.018, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Staves", "Iterations" : 18000, "mAP" : 94.004, "AP75" : 99.010, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 18300, "mAP" : 91.301, "AP75" : 96.478, "AP50" : 96.498, "system measures mAP" : 95.768, "staves mAP" : 86.834, "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 2700, "mAP" : 77.829, "AP75" : 88.697, "AP50" : 89.366, "system measures mAP" : 85.383, "staves mAP" : 79.779, "stave measures mAP" : 68.324}, ignore_index=True)
-    elif model == "X_101_32x8d":
-        df = df.append({"Model Name" : "System measures", "Iterations" : 19500, "mAP" : 97.112, "AP75" : 98.928, "AP50" : 98.949, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Stave measures", "Iterations" : 17100, "mAP" : 89.254, "AP75" : 97.903, "AP50" : 98.018, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "Staves", "Iterations" : 18000, "mAP" : 94.004, "AP75" : 99.010, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 18300, "mAP" : 91.301, "AP75" : 96.478, "AP50" : 96.498, "system measures mAP" : 95.768, "staves mAP" : 86.834, "stave measures mAP" : "XX"}, ignore_index=True)
-        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 2700, "mAP" : 77.829, "AP75" : 88.697, "AP50" : 89.366, "system measures mAP" : 85.383, "staves mAP" : 79.779, "stave measures mAP" : 68.324}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures", "Iterations" : 19500, "mAP" : 96.995, "AP75" : 99.010, "AP50" : 99.010, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 17100, "mAP" : 88.997, "AP75" : 97.885, "AP50" : 98.020, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Staves", "Iterations" : 18000, "mAP" : 93.978, "AP75" : 99.008, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 18300, "mAP" : 91.040, "AP75" : 96.529, "AP50" : 96.530, "system measures mAP" : 95.564, "staves mAP" : 86.516, "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 2700, "mAP" : 77.404, "AP75" : 88.382, "AP50" : 89.080, "system measures mAP" : 84.701, "staves mAP" : 79.450, "stave measures mAP" : 68.064}, ignore_index=True)
+    elif model == "X_101_32x8d_FPN_3x":
+        df = df.append({"Model Name" : "System measures", "Iterations" : 18600, "mAP" : 96.751, "AP75" : 99.002, "AP50" : 99.002, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 18300, "mAP" : 89.058, "AP75" : 97.883, "AP50" : 97.999, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Staves", "Iterations" : 9900, "mAP" : 94.171, "AP75" : 100.00, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 20000, "mAP" : 91.221, "AP75" : 96.521, "AP50" : 96.527, "system measures mAP" : 96.816, "staves mAP" : 85.625, "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 4200, "mAP" : 76.546, "AP75" : 86.203, "AP50" : 86.785, "system measures mAP" : 84.638, "staves mAP" : 72.900, "stave measures mAP" : 72.100}, ignore_index=True)
 
     if type_of_annotation == "system_measures":
         st.table(df.loc[0:0].set_index("Model Name"))
