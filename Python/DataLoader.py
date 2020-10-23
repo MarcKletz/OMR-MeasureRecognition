@@ -11,8 +11,8 @@ from omrdatasettools.Downloader import Downloader
 from omrdatasettools.OmrDataset import OmrDataset
 
 # External files to download.
-google_drive_zip_id = "1YExJd-os3OU3yXJTXNOqS7ot-g-xGXzR"
-zip_file_size = 1475.78
+google_drive_zip_id = "1VPvjIIzfW9cJAQbGOf0hzxEGr3v8QRwJ"
+zip_file_size = 7546.37
 
 class DataLoader:
     def download_datasets(self, root_dir):

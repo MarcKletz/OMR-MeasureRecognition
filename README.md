@@ -34,16 +34,16 @@ generate the json annotations for the datasets.
 | System measures, Stave measures and Staves |     2700      |  77.829  |  88.697  |  89.366  |       85.383        |    79.779     |         68.324        |
 
 
-<!-- STILL NEEDS TO BE TRAINED
+
 ## Faster R-CNN with ResNeXt-101-32x8d backbone
 |   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
 |:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     19500     |  97.112  |  98.928  |  98.949  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     17100     |  89.254  |  97.903  |  98.018  |        XX           |      XX       |           XX          |
-|      Staves         					     |     10800     |  93.596  |  98.987  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     18300     |  91.301  |  96.478  |  96.498  |       95.768        |    86.834     |           XX          |
-| System measures, Stave measures and Staves |     2700      |  77.829  |  88.697  |  89.366  |       85.383        |    79.779     |         68.324        |
--->
+|   System measures   					     |     18600     |  96.931  |  98.909  |  98.943  |        XX           |      XX       |           XX          |
+|   Stave measures    					     |     18300     |  89.360  |  97.867  |  98.020  |        XX           |      XX       |           XX          |
+|      Staves         					     |     9900      |  94.255  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
+| System measures and Staves                 |     20000     |  90.880  |  95.981  |  96.006  |       96.732        |    85.028     |           XX          |
+| System measures, Stave measures and Staves |     4200      |  76.778  |  86.219  |  86.754  |       85.278        |    72.417     |         72.638        |
+
 
 # Installation Setup
 

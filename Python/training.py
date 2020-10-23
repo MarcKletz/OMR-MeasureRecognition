@@ -34,12 +34,12 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # %%
 # to decide which data should be loaded use this:
 
-# type_of_annotation = ["system_measures"]
+type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
 # type_of_annotation = ["staves"]
 
 # type_of_annotation = ["system_measures", "staves"]
-type_of_annotation = ["system_measures", "stave_measures", "staves"]
+# type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
 
