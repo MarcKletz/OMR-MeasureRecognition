@@ -120,8 +120,8 @@ trainer = DefaultTrainer(cfg)
 trainer.resume_or_load(resume=True)
 # %%
 tasks = ("bbox",)
-evaluator = COCOEvaluator(val_data_name, tasks, False, output_dir=cfg.OUTPUT_DIR)
-val_loader = build_detection_test_loader(cfg, val_data_name)
+evaluator = COCOEvaluator(test_data_name, tasks, False, output_dir=cfg.OUTPUT_DIR)
+val_loader = build_detection_test_loader(cfg, test_data_name)
 print(inference_on_dataset(trainer.model, val_loader, evaluator))
 # %%
 print("model has been trained for :", trainer.start_iter, "iterations")

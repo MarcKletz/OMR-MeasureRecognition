@@ -46,7 +46,7 @@ def main():
     st.sidebar.title("What to do")
 
     what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference", "Download predictions"])
-    model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x"])
+    model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d"])
     type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
         ["staves", "system_measures", "stave_measures", "system_measures-staves", "system_measures-stave_measures-staves", "model ensemble"]) 
 
@@ -151,7 +151,13 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
         df = df.append({"Model Name" : "Staves", "Iterations" : 18000, "mAP" : 94.004, "AP75" : 99.010, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
         df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 18300, "mAP" : 91.301, "AP75" : 96.478, "AP50" : 96.498, "system measures mAP" : 95.768, "staves mAP" : 86.834, "stave measures mAP" : "XX"}, ignore_index=True)
         df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 2700, "mAP" : 77.829, "AP75" : 88.697, "AP50" : 89.366, "system measures mAP" : 85.383, "staves mAP" : 79.779, "stave measures mAP" : 68.324}, ignore_index=True)
-    
+    elif model == "X_101_32x8d":
+        df = df.append({"Model Name" : "System measures", "Iterations" : 19500, "mAP" : 97.112, "AP75" : 98.928, "AP50" : 98.949, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Stave measures", "Iterations" : 17100, "mAP" : 89.254, "AP75" : 97.903, "AP50" : 98.018, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "Staves", "Iterations" : 18000, "mAP" : 94.004, "AP75" : 99.010, "AP50" : 100.00, "system measures mAP" : "XX", "staves mAP" : "XX", "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures and Staves", "Iterations" : 18300, "mAP" : 91.301, "AP75" : 96.478, "AP50" : 96.498, "system measures mAP" : 95.768, "staves mAP" : 86.834, "stave measures mAP" : "XX"}, ignore_index=True)
+        df = df.append({"Model Name" : "System measures, Stave measures and Staves", "Iterations" : 2700, "mAP" : 77.829, "AP75" : 88.697, "AP50" : 89.366, "system measures mAP" : 85.383, "staves mAP" : 79.779, "stave measures mAP" : 68.324}, ignore_index=True)
+
     if type_of_annotation == "system_measures":
         st.table(df.loc[0:0].set_index("Model Name"))
     elif type_of_annotation == "stave_measures":

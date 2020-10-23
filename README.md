@@ -1,39 +1,39 @@
 # THIS REPO AND README IS STILL UNDER HEAVY DEVELOPMENT!
 
 # About this repo
-This repo runs live here:  
-https://share.streamlit.io/marckletz/omr-measurerecognition/Python/streamlit_app.py
+This repo has a live app running ## [here](https://share.streamlit.io/marckletz/omr-measurerecognition/Python/streamlit_app.py)
+
 
 ## Faster R-CNN with ResNet-50 backbone
 |   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
 |:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     16500     |  96.547  |  98.935  |  98.970  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     16200     |  88.168  |  96.860  |  98.013  |        XX           |      XX       |           XX          |
-|      Staves         					     |     10800     |  93.596  |  98.987  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     15000     |  90.792  |  96.481  |  96.500  |       95.532        |    86.053     |           XX          |
-| System measures, Stave measures and Staves |     4500      |  77.779  |  86.884  |  87.404  |       90.010        |    78.622     |         64.706        |
+|   System measures   					     |     16500     |  96.352  |  99.010  |  99.010  |        XX           |      XX       |           XX          |
+|   Stave measures    					     |     16200     |  88.003  |  97.791  |  98.020  |        XX           |      XX       |           XX          |
+|      Staves         					     |     10800     |  93.387  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
+| System measures and Staves                 |     15000     |  90.746  |  96.526  |  96.532  |       95.487        |    86.004     |           XX          |
+| System measures, Stave measures and Staves |     4500      |  77.485  |  86.905  |  87.103  |       89.909        |    78.344     |         64.202        |
 
 
 
 ## Faster R-CNN with ResNet-101 backbone
 |   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
 |:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     19500     |  97.112  |  98.928  |  98.949  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     17100     |  89.254  |  97.903  |  98.018  |        XX           |      XX       |           XX          |
-|      Staves         					     |     18000     |  94.004  |  99.010  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     18300     |  91.301  |  96.478  |  96.498  |       95.768        |    86.834     |           XX          |
-| System measures, Stave measures and Staves |     2700      |  77.829  |  88.697  |  89.366  |       85.383        |    79.779     |         68.324        |
+|   System measures   					     |     19500     |  96.995  |  99.010  |  99.010  |        XX           |      XX       |           XX          |
+|   Stave measures    					     |     17100     |  88.997  |  97.885  |  98.020  |        XX           |      XX       |           XX          |
+|      Staves         					     |     18000     |  93.978  |  99.008  |  100.00  |        XX           |      XX       |           XX          |
+| System measures and Staves                 |     18300     |  91.040  |  96.529  |  96.530  |       95.564        |    86.516     |           XX          |
+| System measures, Stave measures and Staves |     2700      |  77.404  |  88.382  |  89.080  |       84.701        |    79.450     |         68.064        |
 
 
 
 ## Faster R-CNN with ResNeXt-101-32x8d backbone
 |   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
 |:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     18600     |  96.931  |  98.909  |  98.943  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     18300     |  89.360  |  97.867  |  98.020  |        XX           |      XX       |           XX          |
-|      Staves         					     |     9900      |  94.255  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     20000     |  90.880  |  95.981  |  96.006  |       96.732        |    85.028     |           XX          |
-| System measures, Stave measures and Staves |     4200      |  76.778  |  86.219  |  86.754  |       85.278        |    72.417     |         72.638        |
+|   System measures   					     |     18600     |  96.751  |  99.002  |  99.002  |        XX           |      XX       |           XX          |
+|   Stave measures    					     |     18300     |  89.058  |  97.883  |  97.999  |        XX           |      XX       |           XX          |
+|      Staves         					     |     9900      |  94.171  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
+| System measures and Staves                 |     20000     |  91.221  |  96.521  |  96.527  |       96.816        |    85.625     |           XX          |
+| System measures, Stave measures and Staves |     4200      |  76.546  |  86.203  |  86.785  |       84.638        |    72.900     |         72.100        |
 
 
 # Installation Setup
