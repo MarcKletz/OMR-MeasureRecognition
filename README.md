@@ -1,17 +1,8 @@
 # THIS REPO AND README IS STILL UNDER HEAVY DEVELOPMENT!
 
 # About this repo
-
-All data required for this GitHub project can be downloaded by using the provided DaterLoader script.  
-Simply calling:  
-```
-DataLoader().download_datasets(root_dir)
-DataLoader().download_trained_models(root_dir)
-DataLoader().generateAllJsonDataAnnotations(root_dir)
-``` 
-Will download the datasets from the OMR-Datasets repository,  
-download all the trained models as specified in the overview and  
-generate the json annotations for the datasets.
+This repo runs live here:  
+https://share.streamlit.io/marckletz/omr-measurerecognition/Python/streamlit_app.py
 
 ## Faster R-CNN with ResNet-50 backbone
 |   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
@@ -126,20 +117,9 @@ Repead step 3.
 
 
 # Run the Streamlit app:
-
 Make sure that the python package installation location is added to path, so that you can run streamlit. If the streamlit command fails with "command not found" you will need to add the following to your path:  
 ```export PATH="$HOME/.local/bin:$PATH"```
 
 Complete the installation instructions and then run:  
 ```streamlit run Python/streamlit_app.py```  
 from the OMR-MeasureRecognition repository
-
-## Hack to accept multiple files with streamlit API:
-
-if you want to be able to use inference on multiple files you will have to modify the streamlit code.  
-First find where your python side-packages are located by running:
-```pip show streamlit```  
-From here navigate to elements\file_uploader.py  
-Open and change the line accept_multiple_files = False to accept_multiple_files = True  
-This might change in future versions of streamlit to be enabled by default, but the current version I am using (0.66.0) needs this fix.  
-I will remove this fix if any future versions of streamlit update this.
