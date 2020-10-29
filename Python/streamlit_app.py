@@ -217,7 +217,7 @@ def predict_image(predictor, img_file, display_original_image, display_multiple_
     if display_original_image:
         st.image(image, "Your uploaded image", use_column_width=True)
 
-    im = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    im = np.array(image)
     outputs = predictor(im)
 
     if display_multiple_classes:
