@@ -36,9 +36,7 @@ json_path = os.path.join(root_dir, "CVC_muscima_" + json_pathname_extension + ".
 muscima_data = DataLoader().load_from_json(json_path)
 DataLoader().show_data(muscima_data, type_of_annotation)
 
-# %%
 json_path = os.path.join(root_dir, "AudioLabs_" + json_pathname_extension + ".json")
-
 audioLabs_data = DataLoader().load_from_json(json_path)
 DataLoader().show_data(audioLabs_data, type_of_annotation)
 
@@ -49,20 +47,34 @@ def registerDataset(data_name, d, data, classes):
 
     return MetadataCatalog.get(data_name)
 
-muscima_data_name = "muscima"
-muscima_metadata = registerDataset(muscima_data_name, muscima_data_name, muscima_data, type_of_annotation)
+# %%
+from sklearn.model_selection import train_test_split
 
-audioLabs_data_name = "audioLabs"
-audioLabs_metadata = registerDataset(audioLabs_data_name, audioLabs_data_name, audioLabs_data, type_of_annotation)
+musicma_train_data, test_val_data = train_test_split(muscima_data, test_size=0.4, random_state=1)
+musicma_test_data, musicma_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
+
+audiolabs_train_data, test_val_data = train_test_split(audioLabs_data, test_size=0.4, random_state=1)
+audiolabs_test_data, audiolabs_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
+
+train_data = musicma_train_data + audiolabs_train_data
+test_data = musicma_test_data + audiolabs_test_data
+val_data = musicma_val_data + audiolabs_val_data
+
+train_data_name = "train"
+metadata = registerDataset(train_data_name, train_data_name, train_data, type_of_annotation)
+
+test_data_name = "test"
+registerDataset(test_data_name, test_data_name, test_data, type_of_annotation)
+
 
 # %%
-def setup_cfg(musicma_data_name, audioLabs_data_name, num_classes, model_output_dir, cfg_file, existing_model_weight_path):
+def setup_cfg(data_name, num_classes, model_output_dir, cfg_file, existing_model_weight_path):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(cfg_file))
 
     cfg.OUTPUT_DIR = model_output_dir
 
-    cfg.DATASETS.TRAIN = (musicma_data_name, audioLabs_data_name, )
+    cfg.DATASETS.TRAIN = (data_name, )
 
     cfg.DATALOADER.NUM_WORKERS = 0 # Number of data loading threads
 
@@ -95,7 +107,7 @@ last_checkpoint = open(weight_file, "r").read()
 
 path_to_weight_file = os.path.join(model_dir, last_checkpoint) 
 
-cfg = setup_cfg(muscima_data_name, audioLabs_data_name, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
+cfg = setup_cfg(train_data_name, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
 
 #%%
 trainer = DefaultTrainer(cfg)
@@ -103,6 +115,7 @@ trainer.resume_or_load(resume=True)
 predictor = DefaultPredictor(cfg)
 
 # %%
+# step by step process to calculate stave measures from the system measures and staves:
 # fetch random raw prediction boxes:
 for d in random.sample(muscima_data, 1):
     im = cv2.imread(d["file_name"])
@@ -110,18 +123,16 @@ for d in random.sample(muscima_data, 1):
     print(d["file_name"])
     print(outputs["instances"].pred_boxes)
 
-    v = CustomVisualizer(im[:, :, ::-1], metadata=muscima_metadata, scale=1)
+    v = CustomVisualizer(im[:, :, ::-1], metadata=metadata, scale=1)
     v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
     ImageDisplayer().cv2_imshow(v.get_image()[:, :, ::-1])
-
-# step by step process to calculate stave measures from the system measures and staves:
 
 # %%  
 # get all boxes for one image:
 path_to_img = "./../Data\CVC_Muscima_Augmented\CVCMUSCIMA_MultiConditionAligned\staffline-y-variation-v1\w-25\p012.png"
 
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, muscima_metadata, path_to_img, [0])
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, muscima_metadata, path_to_img, [1])
+ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, metadata, path_to_img, [0])
+ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, metadata, path_to_img, [1])
 
 im = cv2.imread(path_to_img)
 outputs = predictor(im)
@@ -282,91 +293,93 @@ def draw_boxes(image_path, df_page):
 # %%
 img = draw_boxes(path_to_img, data_frame)
 display(img)
+
 # %%
-# Now do it for all the images in the muscima dataset:
-
-images_with_annotations = [i["file_name"].replace("\\", "/") for i in muscima_data]
-
-path_to_musicma_folder = "./../Data/CVC_Muscima_Augmented/CVCMUSCIMA_MultiConditionAligned"
-
-data = {"Left" : [],
+# all of the steps above combined in one function:
+def generate_stave_annotations(anno_file_paths):
+    data = {"Left" : [],
         "Top" : [],
         "Bottom" : [],
         "Right" : [],
         "Image" : []
         }
-data_frame = pd.DataFrame(data, columns = ["Left", "Top", "Bottom", "Right", "Image"], dtype='int32')
+    data_frame = pd.DataFrame(data, columns = ["Left", "Top", "Bottom", "Right", "Image"], dtype='int32')
 
-for augmentation_folders in tqdm(os.listdir(path_to_musicma_folder)):
-    path_to_augmentation_folder = os.path.join(path_to_musicma_folder, augmentation_folders)
-    for folder in os.listdir(path_to_augmentation_folder):
-        path_to_images = os.path.join(path_to_augmentation_folder, folder)
-        for image in os.listdir(path_to_images):
-            img_path = os.path.join(path_to_images, image)
+    for anno_img in tqdm(anno_file_paths):
+        # get all boxes for the image:
+        im = cv2.imread(anno_img)
+        outputs = predictor(im)
+        all_boxes = outputs["instances"].pred_boxes.tensor.cpu().numpy()
+        all_classes = outputs["instances"].pred_classes.cpu().numpy()
 
-            # NOTE: not all images in the dataset have annotations,
-            #       correct annotations are needed to calculate the COCO score
-            #       thats why we only generate staveMeasures for the images with annotations
-            if img_path.replace("\\", "/") in images_with_annotations:
-                # get all boxes for the image:
-                im = cv2.imread(img_path)
-                outputs = predictor(im)
-                all_boxes = outputs["instances"].pred_boxes.tensor.cpu().numpy()
-                all_classes = outputs["instances"].pred_classes.cpu().numpy()
+        # merge the boxes with the classes and sort by classes, because they dont have to be in order
+        box_classes = np.concatenate((all_boxes, np.array([all_classes]).T), axis=1)
+        sorted_box_classes = box_classes[box_classes[:,4].argsort()]
 
-                # merge the boxes with the classes and sort by classes, because they dont have to be in order
-                box_classes = np.concatenate((all_boxes, np.array([all_classes]).T), axis=1)
-                sorted_box_classes = box_classes[box_classes[:,4].argsort()]
+        # get the boxes by classes
+        system_indices = np.where(sorted_box_classes == 0)[0]
+        stave_indices = np.where(sorted_box_classes == 1)[0]
 
-                # get the boxes by classes
-                system_indices = np.where(sorted_box_classes == 0)[0]
-                stave_indices = np.where(sorted_box_classes == 1)[0]
+        # there are images in the Measure bounding box annotations v2 with no annotations
+        # nor any music notes, empty pages or pages with text
+        # the network does not always detect system measures or staves (which is correct in such a case)
+        # TODO: (?) it might be beneficial to remove such images beforehand (?)
+        if len(system_indices) == 0 or len(stave_indices) == 0:
+            continue
 
-                system_boxes = sorted_box_classes[system_indices[0]:system_indices[-1]+1]
-                stave_boxes = sorted_box_classes[stave_indices[0]:stave_indices[-1]+1]
+        system_boxes = sorted_box_classes[system_indices[0]:system_indices[-1]+1]
+        stave_boxes = sorted_box_classes[stave_indices[0]:stave_indices[-1]+1]
 
-                # sort the boxes by y values:
-                sorted_system_boxes = system_boxes[np.argsort(system_boxes[:, 1])]
-                sorted_stave_boxes = stave_boxes[np.argsort(stave_boxes[:, 1])]
+        # sort the boxes by y values:
+        sorted_system_boxes = system_boxes[np.argsort(system_boxes[:, 1])]
+        sorted_stave_boxes = stave_boxes[np.argsort(stave_boxes[:, 1])]
 
-                # then run the algorithm:
-                system_measures = get_systems_with_index(sorted_system_boxes)
-                bboxes = sorted_stave_boxes
+        # then run the algorithm:
+        system_measures = get_systems_with_index(sorted_system_boxes)
+        bboxes = sorted_stave_boxes
 
-                system_bounds = get_system_bounds(system_measures)
-                reference_systems = []
+        system_bounds = get_system_bounds(system_measures)
+        reference_systems = []
 
-                for stave in bboxes:
-                    for system in system_bounds:
-                        if is_in_system(stave, system): # does the stave fit into the system
-                            # all systems in system_measures with idx == system[0]
-                            reference_systems = [k for i in system_measures for k in i if k[0] == system[0]]
-                            break
+        for stave in bboxes:
+            for system in system_bounds:
+                if is_in_system(stave, system): # does the stave fit into the system
+                    # all systems in system_measures with idx == system[0]
+                    reference_systems = [k for i in system_measures for k in i if k[0] == system[0]]
+                    break
 
-                    # split the stave with the reference system annotations by
-                    # y_top and y_bottom of the stave but the x_left and x_right of the reference system
-                    if len(reference_systems) != 0:
-                        for system_measure in reference_systems:
-                            left = system_measure[1]
-                            top = stave[1]
-                            bottom = stave[3]
-                            right = system_measure[3]
+            # split the stave with the reference system annotations by
+            # y_top and y_bottom of the stave but the x_left and x_right of the reference system
+            if len(reference_systems) != 0:
+                for system_measure in reference_systems:
+                    left = system_measure[1]
+                    top = stave[1]
+                    bottom = stave[3]
+                    right = system_measure[3]
 
-                            data_row = pd.DataFrame({
-                                "Left" : [left],
-                                "Top" : [top],
-                                "Bottom" : [bottom],
-                                "Right" : [right],
-                                "Image" : [img_path]
-                                })
+                    data_row = pd.DataFrame({
+                        "Left" : [left],
+                        "Top" : [top],
+                        "Bottom" : [bottom],
+                        "Right" : [right],
+                        "Image" : [anno_img]
+                        })
 
-                            data_frame = data_frame.append(data_row, ignore_index=True)
-                    
-                    reference_systems = []
-
+                    data_frame = data_frame.append(data_row, ignore_index=True)
+            
+            reference_systems = []
+    
+    return data_frame
 
 # %%
-data_frame.to_csv("./../Data/Muscima_Generated_StaveMeasures.csv")
+# Now do it for all the images in both datasets:
+anno_paths = [i["file_name"].replace("\\", "/") for i in test_data]
+
+data_frame = generate_stave_annotations(anno_paths)
 
 # %%
+network_name_split = network_type.split("_")
+network_used = network_name_split[0] + "_" + network_name_split[1]
+data_frame.to_csv("./../Data/" + network_used + "_Generated_StaveMeasures.csv")
 
+# %%

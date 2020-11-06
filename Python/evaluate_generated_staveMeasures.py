@@ -15,27 +15,50 @@ from ImageDisplayer import ImageDisplayer
 #%%
 root_dir = "./../Data" # change this to download to a specific location on your pc
 
-data_frame = pd.read_csv(os.path.join(root_dir, "Muscima_Generated_StaveMeasures.csv"))
+# network_type = "R_50"
+# network_type = "R_101"
+network_type = "X_101"
+
+network_used = "SingleNetwork"
+# network_used = "SystemAndStaves"
+# network_used = "SystemAndStaveMeasures"
+
+data_frame = pd.read_csv(os.path.join(root_dir, network_type + "_" + network_used + "_StaveMeasures.csv"))
 data_frame.head()
 # %%
 type_of_annotation = ["stave_measures"]
 json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
-json_path = os.path.join(root_dir, "CVC_muscima_" + json_pathname_extension + ".json")
 
+json_path = os.path.join(root_dir, "CVC_muscima_" + json_pathname_extension + ".json")
 muscima_data = DataLoader().load_from_json(json_path)
 
+json_path = os.path.join(root_dir, "AudioLabs_" + json_pathname_extension + ".json")
+audioLabs_data = DataLoader().load_from_json(json_path)
+
+# %%
+from sklearn.model_selection import train_test_split
+
+musicma_train_data, test_val_data = train_test_split(muscima_data, test_size=0.4, random_state=1)
+musicma_test_data, musicma_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
+
+audiolabs_train_data, test_val_data = train_test_split(audioLabs_data, test_size=0.4, random_state=1)
+audiolabs_test_data, audiolabs_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
+
+test_data = musicma_test_data + audiolabs_test_data
+
+# %%
 # the path slashes are different and need to be compared later, normalise them
-for index, item in enumerate(muscima_data):
-    muscima_data[index]["file_name"] = item["file_name"].replace("\\", "/")
+for index, item in enumerate(test_data):
+    test_data[index]["file_name"] = item["file_name"].replace("\\", "/")
 
 for index, row in data_frame.iterrows():
     data_frame["Image"][index] = row["Image"].replace("\\", "/")
 
-images = [i["file_name"] for i in muscima_data]
+images = [i["file_name"] for i in test_data]
 
 # %%
 ann_boxes = []
-for image in muscima_data:
+for image in test_data:
     for annotation in image["annotations"]:
         box = {
             "image" : image["file_name"],
@@ -201,7 +224,7 @@ global_ap[1] /= len(ap_by_th)
 
 mAP = get_metrics(global_ap)
 print('COCO, IoU = [0.5:0.95]')
-print('mAP', mAP, '\t', 'AP75', ap_by_th[0.75], '\t', 'AP50', ap_by_th[0.5])
+print('mAP', mAP, '\nAP75', ap_by_th[0.75][0], '\nAP50', ap_by_th[0.5][0])
 
 # %%
 
