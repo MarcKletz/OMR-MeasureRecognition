@@ -19,9 +19,9 @@ root_dir = "./../Data" # change this to download to a specific location on your 
 # network_type = "R_101"
 network_type = "X_101"
 
-network_used = "SingleNetwork"
-# network_used = "SystemAndStaves"
-# network_used = "SystemAndStaveMeasures"
+# network_used = "SingleNetwork"
+network_used = "TwoNN_SystemAndStaves"
+# network_used = "TwoNN_SystemAndStaveMeasures"
 
 data_frame = pd.read_csv(os.path.join(root_dir, network_type + "_" + network_used + "_StaveMeasures.csv"))
 data_frame.head()

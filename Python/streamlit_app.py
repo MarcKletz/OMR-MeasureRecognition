@@ -45,7 +45,7 @@ def main():
 
     st.sidebar.title("Options")
 
-    what_do = st.sidebar.selectbox("Select what to do", ["Show metrics", "Inference", "Download predictions"])
+    what_do = st.sidebar.selectbox("Select what to do", ["Inference", "Show metrics", "Download predictions"])
     model = st.sidebar.selectbox("Choose a model", ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"])
     type_of_annotation = st.sidebar.selectbox("Choose the type of annotation the model looks for",
         ["staves", "system_measures", "stave_measures", "system_measures-staves", "system_measures-stave_measures-staves", "model ensemble"]) 
