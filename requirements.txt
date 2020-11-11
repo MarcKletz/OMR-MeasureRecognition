@@ -13,3 +13,4 @@ Pillow
 Requests
 scikit_learn
 ninja
+detectron2/
