@@ -12,8 +12,6 @@ from detectron2.utils.events import get_event_storage
 from detectron2.utils.logger import setup_logger
 import detectron2.utils.comm as comm
 
-# TODO: do not delete current but prev model because current would be nice to begin training from again
-# TODO : Best loss does not acutally load as best loss when training is stopped and picked up again
 class LossEvalHook(HookBase):
     def __init__(self, cfg, val_period, model, scheduler, data_loader):
         self._threshold = 0.005 # this threshold has to be surpassed for the mean_loss
@@ -73,37 +71,35 @@ class LossEvalHook(HookBase):
         return total_losses_reduced
         
     def _initialize(self):
+        found_models = []
+        # if there are earlier models - get logged variables from metrics
         for files in os.listdir(self._cfg.OUTPUT_DIR):
-            # if there are earlier models - get logged variables from metrics
             if "model" in files:
-                self._saved_model_name = files
+                found_models.append(files)
+            
+        if len(found_models) > 0:
+            self._saved_model_name = found_models[-1]
 
-                lines = []
-                with open(os.path.join(self._cfg.OUTPUT_DIR, "metrics.json"), 'r') as f:
-                    for line in f:
-                        json_line = json.loads(line)
-                        lines.append(json_line)
-                        if json_line["iteration"] == self.trainer.iter-1:
-                            break
-                # to remove any metrics that have been generated from future iterations
-                with open(os.path.join(self._cfg.OUTPUT_DIR, "metrics.json"), "w") as f:
-                    for line in lines:
-                        f.write(json.dumps(line))
-                        f.write("\n")
+            lines = []
+            with open(os.path.join(self._cfg.OUTPUT_DIR, "metrics.json"), 'r') as f:
+                for line in f:
+                    json_line = json.loads(line)
+                    lines.append(json_line)
+                    if json_line["iteration"] == self.trainer.iter-1:
+                        break
+            # to remove any metrics that have been generated from future iterations
+            with open(os.path.join(self._cfg.OUTPUT_DIR, "metrics.json"), "w") as f:
+                for line in lines:
+                    f.write(json.dumps(line))
+                    f.write("\n")
 
-                prev_losses = []
-                for x in lines:
-                    if "validation_loss" in x:
-                        prev_losses.append(x['validation_loss'])
-                    if "lr" in x:
-                        self._cfg.SOLVER.BASE_LR = x["lr"]
-                    if "bbox/AP" in x:
+            for x in lines:
+                if "bbox/AP" in x:
+                    if self._best_AP < x["bbox/AP"]:
                         self._best_AP = x["bbox/AP"]
 
-                as_strings = ["%.5f" % e for e in prev_losses]
-
-                self._logger.info("found existing model: " + self._saved_model_name)
-                self._logger.info("previous losses: " + ', '.join(as_strings))
+            self._logger.info("found existing model: " + self._saved_model_name)
+            self._logger.info("with best AP: " + str(self._best_AP))
 
     def after_step(self):
         if not self._is_initialized:
@@ -118,6 +114,7 @@ class LossEvalHook(HookBase):
                 model_name = "model_final.pth"
             else:
                 model_name = "model_" + ("%07.0f" % self.trainer.iter) + ".pth"
+                prev_model_name = "model_" + ("%07.0f" % (self.trainer.iter-self._period)) + ".pth"
 
             current_AP = self.trainer.storage._latest_scalars["bbox/AP"]
             if isinstance(current_AP, tuple): # on windows latest_scalars will be a tuple, on linux not
@@ -129,14 +126,20 @@ class LossEvalHook(HookBase):
             elif current_AP > self._best_AP:
                 # remove old model and save new model
                 self._logger.info("found model with better AP, saving model : " + model_name)
-                self._logger.info("removing previous model: " + self._saved_model_name)
+                self._logger.info("removing previous best model: " + self._saved_model_name)
                 os.remove(os.path.join(self._cfg.OUTPUT_DIR, self._saved_model_name))
+                
+                if self._saved_model_name != prev_model_name:
+                    self._logger.info("remove previous model : " + prev_model_name)
+                    os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
+                
                 self._saved_model_name = model_name
                 self._best_AP = current_AP
             else: 
-                # remove worse model
-                self._logger.info("AP did not increase, removing previous model: " + model_name)
-                os.remove(os.path.join(self._cfg.OUTPUT_DIR, model_name))
+                if self._saved_model_name != prev_model_name:
+                    # remove worse model
+                    self._logger.info("AP did not increase, removing previous model: " + prev_model_name)
+                    os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
 
             # correct the last_checkpoint file
             save_file = os.path.join(self._cfg.OUTPUT_DIR, "last_checkpoint")

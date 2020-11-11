@@ -63,11 +63,74 @@ def registerDataset(data_name, d, data, classes):
     return MetadataCatalog.get(data_name)
 
 # %%
+# Put all pages for an augmentation into one set (training, test, validation)
+# this code makes sure that a music page will be in one set with all their augmentations
+# we do not want the same music pages with different augmentations ending up in the training and test dataset. (data-leak)
+# This splits the data to 60% training, 20% testing and 20% validation
+def custom_muscima_split(muscima_split_data, muscima_data):
+    all_augmentations = ["binary", "grayscale", "interrupted", "kanungo", "staffline-thickness-variation-v1",
+                    "staffline-thickness-variation-v2", "staffline-y-variation-v1", "staffline-y-variation-v2",
+                    "typeset-emulation", "whitespeckles"]
+
+    train_d = split(all_augmentations, muscima_split_data, muscima_data, 0.6)
+
+    for x in train_d:
+        if "binary" in x["file_name"]: # other folders are now in the split data aswel
+            muscima_split_data.remove(x)
+
+    test_d = split(all_augmentations, muscima_split_data, muscima_data, 0.5)
+
+    for x in test_d:
+        if "binary" in x["file_name"]: # other folders are now in the split data aswel
+            muscima_split_data.remove(x)
+    
+    val_d = split(all_augmentations, muscima_split_data, muscima_data, 1)
+
+    return train_d, test_d, val_d
+
+def split(all_augmentations, muscima_split_data, muscima_data, percentage):
+    data = []
+    for d in random.sample(muscima_split_data, int(len(muscima_split_data) * percentage)):
+        split_file_name = d["file_name"].replace("\\", "/").split("/")
+
+        for augmentation in all_augmentations:
+            augment_path = ""
+            for i in range(0, len(split_file_name)):
+                if i == 5:
+                    augment_path += augmentation
+                else:
+                    augment_path += split_file_name[i]
+                if i != len(split_file_name)-1:
+                    augment_path += "/"
+
+            for msd in muscima_data:
+                if msd["file_name"].replace("\\", "/") == augment_path:
+                    data.append(msd)
+                    break
+            
+    return data
+
+
+# %%
+random.seed(1) # set the random seed
+muscima_split_data = []
+
+# get 140 pages
+for x in muscima_data:
+    if "binary" in x["file_name"]:
+        muscima_split_data.append(x)
+
+musicma_train_data, musicma_test_data, musicma_val_data = custom_muscima_split(muscima_split_data, muscima_data)
+
+# just to make sure that the detectron data loader does not load the same image
+# back to back only with augmentations
+random.shuffle(musicma_train_data)
+random.shuffle(musicma_test_data)
+random.shuffle(musicma_val_data)
+
+# %%
+# audiolabs data can be split regularly
 from sklearn.model_selection import train_test_split
-
-musicma_train_data, test_val_data = train_test_split(muscima_data, test_size=0.4, random_state=1)
-musicma_test_data, musicma_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
-
 audiolabs_train_data, test_val_data = train_test_split(audioLabs_data, test_size=0.4, random_state=1)
 audiolabs_test_data, audiolabs_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
 
@@ -86,7 +149,7 @@ registerDataset(val_data_name, val_data_name, val_data, type_of_annotation)
 
 
 # %%
-def setup_cfg(train_data_name, test_data_name, val_period, max_iter, num_classes, model_output_dir, cfg_file, existing_model_weight_path=None):
+def setup_cfg(train_data_name, val_data_name, val_period, max_iter, num_classes, model_output_dir, cfg_file, existing_model_weight_path=None):
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(cfg_file))
 
@@ -97,7 +160,7 @@ def setup_cfg(train_data_name, test_data_name, val_period, max_iter, num_classes
     setup_logger(model_output_dir)
 
     cfg.DATASETS.TRAIN = (train_data_name,)
-    cfg.DATASETS.TEST = (test_data_name,)
+    cfg.DATASETS.TEST = (val_data_name,) # use the validation data to evaluate model during training
 
     # TODO: how about unix / mac?
     if sys.platform.startswith("linux"):
@@ -172,14 +235,14 @@ model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
 
 # if you already trained a model - link to its path with path
-weight_file = "model_0000499.pth"
+weight_file = "model_0002699.pth"
 path_to_weight_file = os.path.join(model_dir, weight_file)
 
 # to start training from scratch
-cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
+cfg, continue_training = setup_cfg(train_data_name, val_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file)
 
 # to continue training from weight file
-# cfg, continue_training = setup_cfg(train_data_name, test_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
+# cfg, continue_training = setup_cfg(train_data_name, val_data_name, val_period, max_iter, len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
 
 # %%
 # generate the coco annotations for the evaluator before the evaluator hook

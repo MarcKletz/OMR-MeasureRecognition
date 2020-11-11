@@ -12,6 +12,8 @@ from detectron2.utils.events import get_event_storage
 from detectron2.utils.logger import setup_logger
 import detectron2.utils.comm as comm
 
+# !!! DEPRECATED !!!
+
 # several tests have shown that this hook does not produce better results
 # which is why the simpler hook, will be used in the trainer
 

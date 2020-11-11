@@ -88,9 +88,9 @@ def setup_cfg(data_name, num_classes, model_output_dir, cfg_file, existing_model
     return cfg
 
 # %%
-# network_type = "R_50_FPN_3x"
+network_type = "R_50_FPN_3x"
 # network_type = "R_101_FPN_3x"
-network_type = "X_101_32x8d_FPN_3x"
+# network_type = "X_101_32x8d_FPN_3x"
 
 # %%
 annotation_type = "system_measures"
