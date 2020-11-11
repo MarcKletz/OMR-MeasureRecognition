@@ -56,6 +56,9 @@ class DataLoader:
         is_running_with_streamlit = st._is_running_with_streamlit
         file_path = os.path.join(root_dir, "Models")
 
+        if not os.path.exists(file_path):
+            os.mkdir(file_path)
+
         for backbone in model_backbones:
             if backbone == "R_50_FPN_3x":
                 zip_file_size = 300
