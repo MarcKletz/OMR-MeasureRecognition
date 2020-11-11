@@ -96,13 +96,11 @@ Step 4:
 install all the required python libraries from this repository:  
 ```sudo pip3 install -r local_requirements.txt [-v]```  
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
-(Requires admin privileges!)
 
 Step 5:  
 Install the Detectron2 submodule as python library by running  
-```python setup.py install```  
+```sudo python setup.py install```  
 from within the Detectron2 folder.  
-(Requires admin privileges, so run cmd as admin!)
 
 ## For Windows:
 
