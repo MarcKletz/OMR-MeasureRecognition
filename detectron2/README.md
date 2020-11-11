@@ -1,7 +1,7 @@
 # STREAMLIT CURRENTLY DOES NOT SUPPORT SUBMODULES
 # WE WILL UPDATE THIS FOLDER TO A SUBMODULE ASAP WHEN THIS CHANGES
 
-# ALL WORK IN THIS FOLDER BELONGS TO THE https://github.com/facebookresearch/Detectron/ REPOSITORY
+# ALL WORK IN THIS FOLDER BELONGS TO THE https://github.com/facebookresearch/detectron2 REPOSITORY
 
 <img src=".github/Detectron2-Logo-Horz.svg" width="300" >
 
