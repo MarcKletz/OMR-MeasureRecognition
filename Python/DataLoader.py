@@ -1,7 +1,9 @@
 import os
 import json
 import cv2
-import requests
+import urllib
+import urllib.parse as urlparse
+import urllib.request as urllib2
 from tqdm import tqdm
 import streamlit as st
 from zipfile import ZipFile
@@ -11,8 +13,19 @@ from omrdatasettools.Downloader import Downloader
 from omrdatasettools.OmrDataset import OmrDataset
 
 # External files to download.
-google_drive_zip_id = "1r_UdiKyV8xXiQ3E76gYyO9ViMUiGqFbO"
-zip_file_size = 7369.47
+# google_drive_zip_id = "1r_UdiKyV8xXiQ3E76gYyO9ViMUiGqFbO"
+
+R_50_size = 300
+# R_101_size = 
+# X_101_size = 
+base_github_url = "https://github.com/MarcKletz/OMR-MeasureRecognition/releases/download/"
+release = "0.1"
+
+# model_backbones = ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"]
+model_backbones = ["R_50_FPN_3x"]
+
+# annotations = ["system_measures", "stave_measures", "staves", "system_measures-staves", "system_measures-stave_measures-staves"]
+annotations = ["stave_measures"]
 
 class DataLoader:
     def download_datasets(self, root_dir):
@@ -49,51 +62,94 @@ class DataLoader:
 
         is_running_with_streamlit = st._is_running_with_streamlit
         file_path = os.path.join(root_dir, "Models")
-        if not os.path.exists(file_path):
-            download_warning, progress_bar = None, None
-            try:
-                if is_running_with_streamlit:
-                    download_warning = st.warning("Downloading %s this might take a bit  ..." % os.path.basename(file_path))
-                    progress_bar = st.progress(0)
-                else:
-                    print("Downloading %s this might take a bit..." % os.path.basename(file_path))
 
-                URL = "https://docs.google.com/uc?export=download"
+        for backbone in model_backbones:
+            if backbone == "R_50_FPN_3x":
+                zip_file_size = 300
+            elif backbone == "R_101_FPN_3x":
+                zip_file_size = 450
+            else:
+                zip_file_size = 750
 
-                session = requests.Session()
-                response = session.get(URL, params = { 'id' : google_drive_zip_id }, stream = True)
-                token = self.__get_confirm_token(response)
+            for anno in annotations:
+                path_to_folder = os.path.join(file_path, backbone + "-" + anno)
+                if os.path.exists(path_to_folder):
+                    print("folder path already exists: ", path_to_folder)
+                    continue
+                download_url = base_github_url + release + "/" + backbone + "-" + anno + ".zip"
 
-                if token:
-                    params = { 'id' : google_drive_zip_id, 'confirm' : token }
-                    response = session.get(URL, params = params, stream = True)
+                zip_path = os.path.abspath(path_to_folder) + ".zip"
+                self.__download_file(download_url, zip_path)
 
-                counter = 0.0
-                MEGABYTES = 2.0 ** 20.0
-                length = zip_file_size * MEGABYTES
-                CHUNK_SIZE = 32768
-
-                with open(file_path, "wb") as f:
-                    for chunk in response.iter_content(CHUNK_SIZE):
-                        if chunk: # filter out keep-alive new chunks
-                            f.write(chunk)
-                            counter += len(chunk)
-
-                            if is_running_with_streamlit:
-                                download_warning.warning("Downloading %s  ... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES))
-                                progress_bar.progress(min(counter / length, 1.0))
-                            else:
-                                print("\rDownloading %s... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES), end="", flush=True)
-            finally:
-                if download_warning is not None:
-                    download_warning.empty()
-                if progress_bar is not None:
-                    progress_bar.empty()
-                zip_path = file_path + ".zip"
-                os.rename(file_path, zip_path)
                 with ZipFile(zip_path, "r") as zip_ref:
                     zip_ref.extractall(file_path)
                 os.remove(zip_path)
+
+
+                # download_warning, progress_bar = None, None
+                # try:
+                #     if is_running_with_streamlit:
+                #         download_warning = st.warning("Downloading %s this might take a bit  ..." % os.path.basename(download_url))
+                #         progress_bar = st.progress(0)
+                #     else:
+                #         print("Downloading %s this might take a bit..." % os.path.basename(download_url))
+
+                #     session = requests.Session()
+                #     response = session.get(download_url, stream = True)
+
+                #     counter = 0.0
+                #     MEGABYTES = 2.0 ** 20.0
+                #     length = zip_file_size * MEGABYTES
+                #     CHUNK_SIZE = 32768
+
+                #     with open(file_path, "wb") as f:
+                #         for chunk in response.iter_content(CHUNK_SIZE):
+                #             if chunk: # filter out keep-alive new chunks
+                #                 f.write(chunk)
+                #                 counter += len(chunk)
+
+                #                 if is_running_with_streamlit:
+                #                     download_warning.warning("Downloading %s  ... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES))
+                #                     progress_bar.progress(min(counter / length, 1.0))
+                #                 else:
+                #                     print("\rDownloading %s... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES), end="", flush=True)
+                # finally:
+                #     if download_warning is not None:
+                #         download_warning.empty()
+                #     if progress_bar is not None:
+                #         progress_bar.empty()
+                #     zip_path = path_to_folder + ".zip"
+                #     os.rename(file_path, zip_path)
+                #     with ZipFile(zip_path, "r") as zip_ref:
+                #         zip_ref.extractall(file_path)
+                #     os.remove(zip_path)
+
+    def __download_file(self, url, dest):
+        u = urllib2.urlopen(url)
+        scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
+        filename = os.path.basename(path)
+
+        with open(dest, 'wb') as f:
+            meta = u.info()
+            meta_func = meta.getheaders if hasattr(meta, 'getheaders') else meta.get_all
+            meta_length = meta_func("Content-Length")
+            file_size = None
+            if meta_length:
+                file_size = int(meta_length[0])
+            print("Downloading: {0} \nBytes: {1} \nInto: {2}".format(filename, file_size, dest), flush=True)
+
+            with tqdm(total=file_size, desc="Downloading (bytes)") as progress_bar:
+                file_size_dl = 0
+                block_sz = 8192
+                while True:
+                    buffer = u.read(block_sz)
+                    if not buffer:
+                        break
+
+                    file_size_dl += len(buffer)
+                    f.write(buffer)
+                    if file_size:
+                        progress_bar.update(len(buffer))
 
     def get_CVC_Muscima_dicts(self, data_dir, image_dir, classes):
         idx = 0
