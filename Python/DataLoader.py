@@ -53,7 +53,6 @@ class DataLoader:
         if not os.path.exists(root_dir):
             os.mkdir(root_dir)
 
-        is_running_with_streamlit = st._is_running_with_streamlit
         file_path = os.path.join(root_dir, "Models")
 
         if not os.path.exists(file_path):
@@ -81,45 +80,6 @@ class DataLoader:
                     zip_ref.extractall(file_path)
                 os.remove(zip_path)
 
-
-                # download_warning, progress_bar = None, None
-                # try:
-                #     if is_running_with_streamlit:
-                #         download_warning = st.warning("Downloading %s this might take a bit  ..." % os.path.basename(download_url))
-                #         progress_bar = st.progress(0)
-                #     else:
-                #         print("Downloading %s this might take a bit..." % os.path.basename(download_url))
-
-                #     session = requests.Session()
-                #     response = session.get(download_url, stream = True)
-
-                #     counter = 0.0
-                #     MEGABYTES = 2.0 ** 20.0
-                #     length = zip_file_size * MEGABYTES
-                #     CHUNK_SIZE = 32768
-
-                #     with open(file_path, "wb") as f:
-                #         for chunk in response.iter_content(CHUNK_SIZE):
-                #             if chunk: # filter out keep-alive new chunks
-                #                 f.write(chunk)
-                #                 counter += len(chunk)
-
-                #                 if is_running_with_streamlit:
-                #                     download_warning.warning("Downloading %s  ... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES))
-                #                     progress_bar.progress(min(counter / length, 1.0))
-                #                 else:
-                #                     print("\rDownloading %s... (%6.2f/%6.2f MB)" % (file_path, counter / MEGABYTES, length / MEGABYTES), end="", flush=True)
-                # finally:
-                #     if download_warning is not None:
-                #         download_warning.empty()
-                #     if progress_bar is not None:
-                #         progress_bar.empty()
-                #     zip_path = path_to_folder + ".zip"
-                #     os.rename(file_path, zip_path)
-                #     with ZipFile(zip_path, "r") as zip_ref:
-                #         zip_ref.extractall(file_path)
-                #     os.remove(zip_path)
-
     def __download_file(self, url, dest):
         u = urllib2.urlopen(url)
         scheme, netloc, path, query, fragment = urlparse.urlsplit(url)
@@ -132,20 +92,30 @@ class DataLoader:
             file_size = None
             if meta_length:
                 file_size = int(meta_length[0])
-            print("Downloading: {0} \nBytes: {1} \nInto: {2}".format(filename, file_size, dest), flush=True)
 
-            with tqdm(total=file_size, desc="Downloading (bytes)") as progress_bar:
-                file_size_dl = 0
-                block_sz = 8192
-                while True:
-                    buffer = u.read(block_sz)
-                    if not buffer:
-                        break
+            if(st._is_running_with_streamlit):
+                download_warning, progress_bar = None, None
+                download_warning = st.warning("Downloading %s this might take a bit  ..." % filename)
+                progress_bar = st.progress(0)
+            else:
+                print("Downloading: {0} \nBytes: {1} \nInto: {2}".format(filename, file_size, dest), flush=True)
 
-                    file_size_dl += len(buffer)
-                    f.write(buffer)
-                    if file_size:
-                        progress_bar.update(len(buffer))
+            MEGABYTES = 2.0 ** 20.0
+            file_size_dl = 0
+            block_sz = 8192
+            while True:
+                buffer = u.read(block_sz)
+                if not buffer:
+                    break
+
+                file_size_dl += len(buffer)
+                f.write(buffer)
+                if file_size:
+                    if(st._is_running_with_streamlit):
+                        download_warning.warning("Downloading %s  ... (%6.2f/%6.2f MB)" % (filename, file_size_dl/MEGABYTES, file_size/MEGABYTES))
+                        progress_bar.progress(min(file_size_dl/file_size, 1.0))
+                    else:
+                        print("\rDownloading %s... (%6.2f/%6.2f MB)" % (filename, file_size_dl/MEGABYTES, file_size/MEGABYTES), end="", flush=True)
 
     def get_CVC_Muscima_dicts(self, data_dir, image_dir, classes):
         idx = 0
