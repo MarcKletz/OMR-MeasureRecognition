@@ -1,3 +1,8 @@
+# STREAMLIT CURRENTLY DOES NOT SUPPORT SUBMODULES
+# WE WILL UPDATE THIS FOLDER TO A SUBMODULE ASAP WHEN THIS CHANGES
+
+# ALL WORK IN THIS FOLDER BELONGS TO THE https://github.com/facebookresearch/Detectron/ REPOSITORY
+
 <img src=".github/Detectron2-Logo-Horz.svg" width="300" >
 
 Detectron2 is Facebook AI Research's next generation software system
