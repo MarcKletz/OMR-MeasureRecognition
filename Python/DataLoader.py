@@ -12,20 +12,13 @@ from detectron2.structures import BoxMode
 from omrdatasettools.Downloader import Downloader
 from omrdatasettools.OmrDataset import OmrDataset
 
-# External files to download.
-# google_drive_zip_id = "1r_UdiKyV8xXiQ3E76gYyO9ViMUiGqFbO"
-
-R_50_size = 300
-# R_101_size = 
-# X_101_size = 
 base_github_url = "https://github.com/MarcKletz/OMR-MeasureRecognition/releases/download/"
 release = "0.1"
 
 # model_backbones = ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"]
 model_backbones = ["R_50_FPN_3x"]
 
-# annotations = ["system_measures", "stave_measures", "staves", "system_measures-staves", "system_measures-stave_measures-staves"]
-annotations = ["stave_measures"]
+annotations = ["system_measures", "stave_measures", "staves", "system_measures-staves", "system_measures-stave_measures-staves"]
 
 class DataLoader:
     def download_datasets(self, root_dir):
@@ -78,7 +71,7 @@ class DataLoader:
                     continue
                 download_url = base_github_url + release + "/" + backbone + "-" + anno + ".zip"
 
-                zip_path = os.path.abspath(path_to_folder) + ".zip"
+                zip_path = path_to_folder + ".zip"
                 self.__download_file(download_url, zip_path)
 
                 with ZipFile(zip_path, "r") as zip_ref:
