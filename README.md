@@ -35,6 +35,18 @@
 | System measures and Staves                 |     20000     |  91.221  |  96.521  |  96.527  |       96.816        |    85.625     |           XX          |
 | System measures, Stave measures and Staves |     4200      |  76.546  |  86.203  |  86.785  |       84.638        |    72.900     |         72.100        |
 
+# Cloning this repository  
+This repository uses Detectron2 as submodule.  
+In order to clone the submodule correctly, you will need to use:  
+```
+git clone --recurse-submodules https://github.com/MarcKletz/OMR-MeasureRecognition
+```
+
+If you already cloned the project and forgot --recurse-submodules,  
+you can combine the git submodule init and git submodule update steps by running  
+```
+git submodule update --init
+```
 
 # Installation Setup
 
@@ -74,13 +86,19 @@ Instead of building it on your own, I recommend to install it with the following
 ```sudo apt install python3-opencv```  
 Dont forget to remove the opencv-python-headless requirement from the linux_requirements.txt if you did this!  
 
-**Debian:**
+**Debian:**  
 Skip to Step 4  
 
 Step 4:  
 install all the required python libraries from this repository:  
-```sudo pip3 install -r requirements.txt [-v]```
+```sudo pip3 install -r requirements.txt [-v]```  
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
+
+Step 5:  
+Install the Detectron2 submodule as python library by running  
+```python setup.py install```  
+from within the Detectron2 folder.  
+(Requires admin privileges, so run cmd as admin!)
 
 ## For Windows:
 
@@ -94,26 +112,19 @@ https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Buil
 
 Step 1:  
 install all the required python libraries from the OMR-MeasureRecognition repo.  
-```pip install -r windows_requirements.txt```
+```pip install -r requirements.txt```
 
 Step 2:  
-manually install detectron2 because there is no windows support, we need to pull and install from source  
-```
-git clone https://github.com/facebookresearch/detectron2.git
-cd detectron2
-git reset --hard 0130967d72346c520c9508620a6833fcef135cee # to pull the exact detectron version 0.2.1
-```
+Install the Detectron2 submodule as python library by running  
+```python setup.py install```  
+from within the Detectron2 folder.  
+(Requires admin privileges, so run cmd as admin!)
 
-Step 3:  
-now you can install detectron2 with:  
-```python setup.py install```
-Requires admin privileges, so run cmd as admin!
-
-Possible step 4:  
+Possible step 3:  
 If step 3 fails with an error message about an nms_rotated_cuda.cu file, try this.  
 add the following line in detectron2\detectron2\layers\csrc\nms_rotated\nms_rotated_cuda.cu before #ifdef WITH_HIP:  
 #define WITH_HIP  
-Repead step 3.
+Repead step 2.
 
 
 # Run the Streamlit app:
