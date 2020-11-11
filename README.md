@@ -2,6 +2,9 @@
 
 # About this repo
 ## [This repo has a live app running here](https://share.streamlit.io/marckletz/omr-measurerecognition/Python/streamlit_app.py)
+The requirements file is used by the Streamlit application.  
+It is different from the local_requirements file in that it does not use the integrated submodule because streamlit does not yet support submodules.  
+This will be changed ASAP when the support for submodules is implemented by the Streamlit framework.
 
 
 ## Faster R-CNN with ResNet-50 backbone
@@ -91,7 +94,7 @@ Skip to Step 4
 
 Step 4:  
 install all the required python libraries from this repository:  
-```sudo pip3 install -r requirements.txt [-v]```  
+```sudo pip3 install -r local_requirements.txt [-v]```  
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
 (Requires admin privileges!)
 
@@ -107,7 +110,7 @@ https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Buil
 
 Step 1:  
 install all the required python libraries from the OMR-MeasureRecognition repo.  
-```pip install -r requirements.txt```  
+```pip install -r local_requirements.txt```  
 (Requires admin privileges!)  
 
 Possible step 2:  
