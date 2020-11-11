@@ -98,6 +98,12 @@ install all the required python libraries from this repository:
 This might take a while! So be patient, you may add the -v tag to see installation progress.  
 (Requires admin privileges!)
 
+Step 5:  
+Install the Detectron2 submodule as python library by running  
+```python setup.py install```  
+from within the Detectron2 folder.  
+(Requires admin privileges, so run cmd as admin!)
+
 ## For Windows:
 
 Requirements:  
@@ -113,7 +119,13 @@ install all the required python libraries from the OMR-MeasureRecognition repo.
 ```pip install -r local_requirements.txt```  
 (Requires admin privileges!)  
 
-Possible step 2:  
+Step 2:  
+Install the Detectron2 submodule as python library by running  
+```python setup.py install```  
+from within the Detectron2 folder.  
+(Requires admin privileges, so run cmd as admin!)
+
+Possible step 3:  
 If step 3 fails with an error message about an nms_rotated_cuda.cu file, try this.  
 add the following line in detectron2\detectron2\layers\csrc\nms_rotated\nms_rotated_cuda.cu before #ifdef WITH_HIP:  
 #define WITH_HIP  
