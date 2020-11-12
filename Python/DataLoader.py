@@ -7,6 +7,7 @@ import urllib.request as urllib2
 from tqdm import tqdm
 import streamlit as st
 from zipfile import ZipFile
+import random
 
 from detectron2.structures import BoxMode
 from omrdatasettools.Downloader import Downloader
@@ -234,6 +235,64 @@ class DataLoader:
         print(data[0])
         print(classes)
         print(len(data))
+
+    # This splits the data to 60% training, 20% testing and 20% validation
+    def custom_muscima_split(self, muscima_data):
+        rand = random.Random(1)
+
+        muscima_split_data = []
+        # get 140 pages
+        for x in muscima_data:
+            if "binary" in x["file_name"]:
+                muscima_split_data.append(x)
+
+        all_augmentations = ["binary", "grayscale", "interrupted", "kanungo", "staffline-thickness-variation-v1",
+                        "staffline-thickness-variation-v2", "staffline-y-variation-v1", "staffline-y-variation-v2",
+                        "typeset-emulation", "whitespeckles"]
+
+        train_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.6, random)
+
+        for x in train_d:
+            if "binary" in x["file_name"]: # other folders are now in the split data aswel
+                muscima_split_data.remove(x)
+
+        test_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.5, random)
+
+        for x in test_d:
+            if "binary" in x["file_name"]: # other folders are now in the split data aswel
+                muscima_split_data.remove(x)
+        
+        val_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 1, random)
+
+        # just to make sure that the detectron data loader does not load the same image
+        # back to back only with augmentations
+        rand.shuffle(train_d)
+        rand.shuffle(test_d)
+        rand.shuffle(val_d)
+
+        return train_d, test_d, val_d
+
+    def __split(self, all_augmentations, muscima_split_data, muscima_data, percentage, random):
+        data = []
+        for d in random.sample(muscima_split_data, int(len(muscima_split_data) * percentage)):
+            split_file_name = d["file_name"].replace("\\", "/").split("/")
+
+            for augmentation in all_augmentations:
+                augment_path = ""
+                for i in range(0, len(split_file_name)):
+                    if i == 5:
+                        augment_path += augmentation
+                    else:
+                        augment_path += split_file_name[i]
+                    if i != len(split_file_name)-1:
+                        augment_path += "/"
+
+                for msd in muscima_data:
+                    if msd["file_name"].replace("\\", "/") == augment_path:
+                        data.append(msd)
+                        break
+                
+        return data
 
     # bbox_mode is from type BoxMode(IntEnum) which cant simply be converted to json
     # So I had to create functions that encode and decode the enums

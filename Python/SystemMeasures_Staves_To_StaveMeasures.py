@@ -50,8 +50,10 @@ def registerDataset(data_name, d, data, classes):
 # %%
 from sklearn.model_selection import train_test_split
 
-musicma_train_data, test_val_data = train_test_split(muscima_data, test_size=0.4, random_state=1)
-musicma_test_data, musicma_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)
+# Put all pages for an augmentation into one set (training, test, validation)
+# this code makes sure that a music page will be in one set with all their augmentations
+# we do not want the same music pages with different augmentations ending up in the training and test dataset. (data-leak)
+musicma_train_data, musicma_test_data, musicma_val_data = DataLoader().custom_muscima_split(muscima_data)
 
 audiolabs_train_data, test_val_data = train_test_split(audioLabs_data, test_size=0.4, random_state=1)
 audiolabs_test_data, audiolabs_val_data = train_test_split(test_val_data, test_size=0.5, random_state=1)

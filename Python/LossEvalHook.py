@@ -93,12 +93,15 @@ class LossEvalHook(HookBase):
                     f.write(json.dumps(line))
                     f.write("\n")
 
+            best_model_iteration = 0
             for x in lines:
                 if "bbox/AP" in x:
                     if self._best_AP < x["bbox/AP"]:
                         self._best_AP = x["bbox/AP"]
+                        best_model_iteration = x["iteration"]
 
-            self._logger.info("found existing model: " + self._saved_model_name)
+            self._saved_model_name = "model_" + ("%07.0f" % best_model_iteration) + ".pth"
+            self._logger.info("found best model: " + self._saved_model_name)
             self._logger.info("with best AP: " + str(self._best_AP))
 
     def after_step(self):
@@ -112,6 +115,7 @@ class LossEvalHook(HookBase):
 
             if is_final:
                 model_name = "model_final.pth"
+                prev_model_name = "model_0019799.pth"
             else:
                 model_name = "model_" + ("%07.0f" % self.trainer.iter) + ".pth"
                 prev_model_name = "model_" + ("%07.0f" % (self.trainer.iter-self._period)) + ".pth"
@@ -128,7 +132,7 @@ class LossEvalHook(HookBase):
                 self._logger.info("found model with better AP, saving model : " + model_name)
                 self._logger.info("removing previous best model: " + self._saved_model_name)
                 os.remove(os.path.join(self._cfg.OUTPUT_DIR, self._saved_model_name))
-                
+
                 if self._saved_model_name != prev_model_name:
                     self._logger.info("remove previous model : " + prev_model_name)
                     os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
@@ -141,7 +145,8 @@ class LossEvalHook(HookBase):
                     self._logger.info("AP did not increase, removing previous model: " + prev_model_name)
                     os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
 
-            # correct the last_checkpoint file
-            save_file = os.path.join(self._cfg.OUTPUT_DIR, "last_checkpoint")
-            with open(save_file, 'w') as f:
-                f.write(self._saved_model_name)
+            if is_final:
+                # correct the last_checkpoint file
+                save_file = os.path.join(self._cfg.OUTPUT_DIR, "last_checkpoint")
+                with open(save_file, 'w') as f:
+                    f.write(self._saved_model_name)
