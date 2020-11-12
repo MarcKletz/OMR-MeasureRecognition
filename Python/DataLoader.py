@@ -250,19 +250,19 @@ class DataLoader:
                         "staffline-thickness-variation-v2", "staffline-y-variation-v1", "staffline-y-variation-v2",
                         "typeset-emulation", "whitespeckles"]
 
-        train_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.6, random)
+        train_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.6, rand)
 
         for x in train_d:
             if "binary" in x["file_name"]: # other folders are now in the split data aswel
                 muscima_split_data.remove(x)
 
-        test_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.5, random)
+        test_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 0.5, rand)
 
         for x in test_d:
             if "binary" in x["file_name"]: # other folders are now in the split data aswel
                 muscima_split_data.remove(x)
         
-        val_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 1, random)
+        val_d = self.__split(all_augmentations, muscima_split_data, muscima_data, 1, rand)
 
         # just to make sure that the detectron data loader does not load the same image
         # back to back only with augmentations
