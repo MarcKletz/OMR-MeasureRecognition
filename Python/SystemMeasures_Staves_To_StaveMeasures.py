@@ -381,7 +381,7 @@ data_frame = generate_stave_annotations(anno_paths)
 
 # %%
 network_name_split = network_type.split("_")
-network_used = network_name_split[0] + "_" + network_name_split[1]
-data_frame.to_csv("./../Data/" + network_used + "_Generated_StaveMeasures.csv")
+network_used = network_name_split[0] + "_" + network_name_split[1] + "_SingleNetwork"
+data_frame.to_csv("./../Data/" + network_used + "_StaveMeasures.csv")
 
 # %%

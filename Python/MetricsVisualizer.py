@@ -41,14 +41,6 @@ class MetricsVisualizer:
             else:
                 plt.show()
 
-
-
-        for x in metrics:
-            if "total_loss" not in x:
-                print("no total loss:", x)
-
-
-
         if st._is_running_with_streamlit:
             fig, axes = plt.subplots()
         fig = plt.figure(figsize=(10,5))

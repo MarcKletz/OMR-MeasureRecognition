@@ -20,13 +20,23 @@ from IPython.display import display
 root_dir = "./../Data" # change this to download to a specific location on your pc
 
 # %%
-data_frame = pd.read_csv(os.path.join(root_dir, "Muscima_Generated_StaveMeasures.csv"))
+network_type = "R_50"
+# network_type = "R_101"
+# network_type = "X_101"
+
+network_used = "SingleNetwork"
+# TODO: test twoNN results - not possible right now
+# network_used = "TwoNN_SystemAndStaves"
+
+data_frame = pd.read_csv(os.path.join(root_dir, network_type + "_" + network_used + "_StaveMeasures.csv"))
 data_frame.head()
 # %%
 folder_prefix = "/CVC_Muscima_Augmented/CVCMUSCIMA_MultiConditionAligned"
-image = "\\binary\\w-02\\p017.png"
+# image = "\\binary\\w-02\\p017.png"
+image = "\\interrupted\\w-49\\p003.png"
 
 image_to_display = root_dir + folder_prefix + image
+image_to_display = image_to_display.replace("\\", "/")
 print(image_to_display)
 
 image_df = data_frame.loc[data_frame["Image"] == image_to_display]

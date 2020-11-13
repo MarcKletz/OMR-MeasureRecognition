@@ -8,35 +8,35 @@ This will be changed ASAP when the support for submodules is implemented by the 
 
 
 ## Faster R-CNN with ResNet-50 backbone
-|   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
-|:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     16500     |  96.352  |  99.010  |  99.010  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     16200     |  88.003  |  97.791  |  98.020  |        XX           |      XX       |           XX          |
-|      Staves         					     |     10800     |  93.387  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     15000     |  90.746  |  96.526  |  96.532  |       95.487        |    86.004     |           XX          |
-| System measures, Stave measures and Staves |     4500      |  77.485  |  86.905  |  87.103  |       89.909        |    78.344     |         64.202        |
+|   Category Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
+|:----------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
+|   System measures   					     	 |     12600     |  95.828  |  98.785  |  98.982  |        -            |      -        |           -           |
+|   Stave measures   					     	 |     12900     |  87.639  |  97.582  |  98.933  |        -            |      -        |           -           |
+|   Staves   					     			 |     16500     |  92.578  |  99.003  |  99.010  |        -            |      -        |           -           |
+|   System measures and Staves   				 |     14100     |  88.190  |  95.423  |  95.519  |        93.668       |      82.711   |           -           |
+|   System measures, Stave measures and Staves   |      3600     |  75.970  |  85.549  |  86.422  |        83.366       |      79.535   |           65.010      |
 
 
 
 ## Faster R-CNN with ResNet-101 backbone
-|   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
-|:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     19500     |  96.995  |  99.010  |  99.010  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     17100     |  88.997  |  97.885  |  98.020  |        XX           |      XX       |           XX          |
-|      Staves         					     |     18000     |  93.978  |  99.008  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     18300     |  91.040  |  96.529  |  96.530  |       95.564        |    86.516     |           XX          |
-| System measures, Stave measures and Staves |     2700      |  77.404  |  88.382  |  89.080  |       84.701        |    79.450     |         68.064        |
+|   Category Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
+|:----------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
+|   System measures   					         |     15600     |  95.996  |  98.823  |  98.988  |        -            |      -        |           -           |
+|   Stave measures   					         |     12600     |  88.882  |  97.515  |  98.938  |        -            |      -        |           -           |
+|   Staves   					     		     |     19200     |  93.650  |  100.00  |  100.00  |        -            |      -        |           -           |
+|   System measures and Staves   			     |      5400     |  88.886  |  96.962  |  97.018  |        93.651       |      84.122   |           -           |
+|   System measures, Stave measures and Staves   |      3000     |  75.041  |  85.297  |  86.713  |        85.676       |      78.454   |           60.992      |
 
 
 
 ## Faster R-CNN with ResNeXt-101-32x8d backbone
-|   Model Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
-|:------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
-|   System measures   					     |     18600     |  96.751  |  99.002  |  99.002  |        XX           |      XX       |           XX          |
-|   Stave measures    					     |     18300     |  89.058  |  97.883  |  97.999  |        XX           |      XX       |           XX          |
-|      Staves         					     |     9900      |  94.171  |  100.00  |  100.00  |        XX           |      XX       |           XX          |
-| System measures and Staves                 |     20000     |  91.221  |  96.521  |  96.527  |       96.816        |    85.625     |           XX          |
-| System measures, Stave measures and Staves |     4200      |  76.546  |  86.203  |  86.785  |       84.638        |    72.900     |         72.100        |
+|   Category Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
+|:----------------------------------------------:|:-------------:|:--------:|:--------:|:--------:|:-------------------:|:-------------:|:---------------------:|
+|   System measures   					         |      8400     |  95.907  |  98.931  |  99.008  |        -            |      -        |           -           |
+|   Stave measures   					         |     15300     |  89.625  |  97.785  |  99.001  |        -            |      -        |           -           |
+|   Staves   					     			 |     10800     |  93.457  |  99.009  |  100.00  |        -            |      -        |           -           |
+|   System measures and Staves   			     |     16800     |  88.941  |  95.319  |  95.693  |        93.792       |      84.091   |           -           |
+|   System measures, Stave measures and Staves   |      1800     |  75.922  |  86.017  |  87.059  |        90.096       |      77.275   |           60.393      |
 
 # Cloning this repository  
 This repository uses Detectron2 as submodule.  
