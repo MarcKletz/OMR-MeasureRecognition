@@ -175,11 +175,11 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
         if type_of_annotation == "model ensemble":
             for c in all_classes:
                 st.markdown("# " + c)
-                MetricsVisualizer().visualizeMetrics(root_dir, model, [c])
+                MetricsVisualizer().visualizeMetrics(root_dir, model, [c], start_plot_iter=300)
         else:
             metrics_type_annotations = [x for x in type_of_annotation.split("-") if x in all_classes]
             st.markdown("# " + type_of_annotation)
-            MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations)
+            MetricsVisualizer().visualizeMetrics(root_dir, model, metrics_type_annotations, start_plot_iter=300)
 
 def handle_prediction(img_file_buffer, model, display_original_image, type_of_annotation):
     for category in type_of_annotation:

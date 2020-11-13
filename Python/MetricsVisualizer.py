@@ -4,7 +4,7 @@ import os
 import json
 
 class MetricsVisualizer:
-    def visualizeMetrics(self, root_dir, network_type, type_of_annotation):
+    def visualizeMetrics(self, root_dir, network_type, type_of_annotation, start_plot_iter=0):
         json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
 
         model = network_type + "-" + json_pathname_extension
@@ -12,7 +12,9 @@ class MetricsVisualizer:
         metrics = []
         with open(os.path.join(root_dir, "Models", model, "metrics.json"), "r") as f:
             for line in f:
-                metrics.append(json.loads(line))
+                l = json.loads(line)
+                if "iteration" in l and l["iteration"] > start_plot_iter:
+                    metrics.append(l)
 
         scalars = []
 
@@ -39,13 +41,21 @@ class MetricsVisualizer:
             else:
                 plt.show()
 
+
+
+        for x in metrics:
+            if "total_loss" not in x:
+                print("no total loss:", x)
+
+
+
         if st._is_running_with_streamlit:
             fig, axes = plt.subplots()
         fig = plt.figure(figsize=(10,5))
         axes = fig.add_axes([.25,.25,.75,.75])
         plt.plot(
-            [x['iteration'] for x in metrics], 
-            [x['total_loss'] for x in metrics])
+            [x['iteration'] for x in metrics if 'total_loss' in x], 
+            [x['total_loss'] for x in metrics if 'total_loss' in x])
         plt.plot(
             [x['iteration'] for x in metrics if 'validation_loss' in x], 
             [x['validation_loss'] for x in metrics if 'validation_loss' in x])
