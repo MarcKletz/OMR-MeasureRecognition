@@ -131,10 +131,16 @@ class LossEvalHook(HookBase):
                 # remove old model and save new model
                 self._logger.info("found model with better AP, saving model : " + model_name)
                 self._logger.info("removing previous best model: " + self._saved_model_name)
+
+                #overwrite and make the file blank to save disk space
+                open(os.path.join(self._cfg.OUTPUT_DIR, self._saved_model_name), 'w').close()
                 os.remove(os.path.join(self._cfg.OUTPUT_DIR, self._saved_model_name))
 
                 if self._saved_model_name != prev_model_name:
                     self._logger.info("remove previous model : " + prev_model_name)
+
+                    #overwrite and make the file blank to save disk space
+                    open(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name), 'w').close()
                     os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
                 
                 self._saved_model_name = model_name
@@ -143,9 +149,18 @@ class LossEvalHook(HookBase):
                 if self._saved_model_name != prev_model_name:
                     # remove worse model
                     self._logger.info("AP did not increase, removing previous model: " + prev_model_name)
+
+                                    #overwrite and make the file blank to save disk space
+                    open(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name), 'w').close()
                     os.remove(os.path.join(self._cfg.OUTPUT_DIR, prev_model_name))
 
             if is_final:
+                if current_AP < self._best_AP:
+                    # remove model_final because it is not better
+                    #overwrite and make the file blank to save disk space
+                    open(os.path.join(self._cfg.OUTPUT_DIR, model_name), 'w').close()
+                    os.remove(os.path.join(self._cfg.OUTPUT_DIR, model_name))
+
                 # correct the last_checkpoint file
                 save_file = os.path.join(self._cfg.OUTPUT_DIR, "last_checkpoint")
                 with open(save_file, 'w') as f:

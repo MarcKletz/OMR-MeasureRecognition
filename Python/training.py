@@ -34,9 +34,9 @@ DataLoader().generateAllJsonDataAnnotations(root_dir)
 # %%
 # to decide which data should be loaded use this:
 
-# type_of_annotation = ["system_measures"]
+type_of_annotation = ["system_measures"]
 # type_of_annotation = ["stave_measures"]
-type_of_annotation = ["staves"]
+# type_of_annotation = ["staves"]
 
 # type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
@@ -175,7 +175,7 @@ model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"
 
 # if you already trained a model - link to its path with path
-weight_file = "model_0002699.pth"
+weight_file = "model_0010499.pth"
 path_to_weight_file = os.path.join(model_dir, weight_file)
 
 # to start training from scratch

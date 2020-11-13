@@ -130,6 +130,6 @@ print(inference_on_dataset(trainer.model, val_loader, evaluator))
 print("model has been trained for :", trainer.start_iter, "iterations")
 
 #%%
-MetricsVisualizer().visualizeMetrics(root_dir, network_type, type_of_annotation)
+MetricsVisualizer().visualizeMetrics(root_dir, network_type, type_of_annotation, start_plot_iter=300)
 
 # %%
