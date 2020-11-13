@@ -87,7 +87,7 @@ This is needed for pycocotools because pip apparently builds all packages first,
 There are no wheels available for opencv-python-headless on some ubuntu distributions.  
 Instead of building it on your own, I recommend to install it with the following command.  
 ```sudo apt install python3-opencv```  
-Dont forget to remove the opencv-python-headless requirement from the linux_requirements.txt if you did this!  
+Dont forget to remove the opencv-python-headless requirement from the local_requirements.txt if you did this!  
 
 **Debian:**  
 Skip to Step 4  
@@ -108,8 +108,7 @@ Requirements:
 Windows SDK  
 C++14.0 build tools  
 Microsoft Visual C++ Redistributable  
-can all be installed with the Visual Studio installer.  
-https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16  
+can all be installed with the [Visual Studio installer](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16).
 ![](Images/VS_setup.png)
 
 Step 1:  
