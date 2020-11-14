@@ -137,7 +137,7 @@ def main():
         """
 
 def display_metrics(model, type_of_annotation, with_visualizer=True):
-    df = pd.DataFrame(columns=["Model Name", "Iterations", "mAP", "AP75", "AP50"])
+    df = pd.DataFrame(columns=["Category Name", "Iterations", "mAP", "AP75", "AP50"])
     df.style.format({"E" : "{:.3%}"})
     if model == "R_50_FPN_3x":
         df = df.append({"Category Name" : "System measures", "Iterations" : 12600, "mAP" : 95.828, "AP75" : 98.785, "AP50" : 98.982, "system measures mAP" : "-", "staves mAP" : "-", "stave measures mAP" : "-"}, ignore_index=True)
