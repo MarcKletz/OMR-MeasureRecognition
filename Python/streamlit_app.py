@@ -159,17 +159,17 @@ def display_metrics(model, type_of_annotation, with_visualizer=True):
         df = df.append({"Category Name" : "System measures, Stave measures and Staves", "Iterations" : 1800, "mAP" : 75.922, "AP75" : 86.017, "AP50" : 87.059, "system measures mAP" : "90.096", "staves mAP" : "77.275", "stave measures mAP" : "60.393"}, ignore_index=True)
 
     if type_of_annotation == "system_measures":
-        st.table(df.loc[0:0].set_index("Model Name"))
+        st.table(df.loc[0:0].set_index("Category Name"))
     elif type_of_annotation == "stave_measures":
-        st.table(df.loc[1:1].set_index("Model Name"))
+        st.table(df.loc[1:1].set_index("Category Name"))
     elif type_of_annotation == "staves":
-        st.table(df.loc[2:2].set_index("Model Name"))
+        st.table(df.loc[2:2].set_index("Category Name"))
     elif type_of_annotation == "system_measures-staves":
-        st.table(df.loc[3:3].set_index("Model Name"))
+        st.table(df.loc[3:3].set_index("Category Name"))
     elif type_of_annotation == "system_measures-stave_measures-staves":
-        st.table(df.loc[4:4].set_index("Model Name"))
+        st.table(df.loc[4:4].set_index("Category Name"))
     elif type_of_annotation == "model ensemble":
-        st.table(df.loc[0:2].set_index("Model Name"))
+        st.table(df.loc[0:2].set_index("Category Name"))
     
     if(with_visualizer):
         if type_of_annotation == "model ensemble":
