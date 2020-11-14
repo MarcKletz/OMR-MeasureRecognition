@@ -16,8 +16,7 @@ from omrdatasettools.OmrDataset import OmrDataset
 base_github_url = "https://github.com/MarcKletz/OMR-MeasureRecognition/releases/download/"
 release = "0.1"
 
-# model_backbones = ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"]
-model_backbones = ["R_50_FPN_3x"]
+model_backbones = ["R_50_FPN_3x", "R_101_FPN_3x", "X_101_32x8d_FPN_3x"]
 
 annotations = ["system_measures", "stave_measures", "staves", "system_measures-staves", "system_measures-stave_measures-staves"]
 
