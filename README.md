@@ -1,11 +1,17 @@
-# THIS REPO AND README IS STILL UNDER HEAVY DEVELOPMENT!
-
 # About this repo
 ## [This repo has a live app running here](https://share.streamlit.io/marckletz/omr-measurerecognition/Python/streamlit_app.py)
-The requirements file is used by the Streamlit application.  
-It is different from the local_requirements file in that it does not use the integrated submodule because streamlit does not yet support submodules.  
+
+This repository has been created as part of my master's thesis. The thesis focuses on detecting system measures, stave measures and staves in music pages with the help of deep learning. I used two open-source datasets for this thesis. The handwritten MUSCIMA++ dataset, which has all three categories and the typeset bounding box annotations of musical measures dataset, which only contains system measures. I first enhanced the typeset dataset by using a deep learning framework called Detectron2. This has been achieved by training a model on only the stave measures from the MUSCIMA++ dataset. The trained model generalized well on the typeset data, so that I could predict stave measures from it. I took the stave measures from the predictions, created staves from them and intersected them with the existing ground truth system measures to generate more precise stave measures. After manually correcting the generated stave measure annotations, I generated stave lines from the system measures and stave measures. These have also been manually corrected where needed. With both datasets now containing all three categories, I trained several models, one for each category, one for system measures and staves, and one for all three categories combined. I also used three different backbones to compare results between them. Our results show that the models generalize well for typeset music pages, but several flaws for handwritten pages have been observed. A web-based tool has been developed and deployed to use our models which is publicly available.
+
+With this work, I achieved remarkable results for object detection in music notes. They are state-of-the-art results and the models produced can be used by anyone by visiting the live Streamlit application or cloning, installing all dependencies and running the application locally on their own pc. To run locally, follow the installation instructions below. Running locally will download all our pre-trained models which are 8GB large.  
+
+All scripts used for this work are in the Python folder. The [training](https://github.com/MarcKletz/OMR-MeasureRecognition/blob/master/Python/training.py), [inference](https://github.com/MarcKletz/OMR-MeasureRecognition/blob/master/Python/inference.py) and [evaluation](https://github.com/MarcKletz/OMR-MeasureRecognition/blob/master/Python/evaluation.py) scripts are probably the most important ones. The scripts demonstrate how I trained all the networks, used inference to manually check their accuracy on data and how I evaluated them based on the COCO-metric. The training process how we enhanced the typeset dataset is also available as a Jupyter Notebook in the [AudioLabsEnhancement](https://github.com/MarcKletz/OMR-MeasureRecognition/blob/master/Python/AudioLabsEnhancement.ipynb) file. Other scripts are used as classes to bundle functionality together. The Streamlit application runs from the [streamlit_app](https://github.com/MarcKletz/OMR-MeasureRecognition/blob/master/Python/streamlit_app.py) file.
+
+There are two different requirement files because the requirements.txt file is used by the Streamlit application.  
+It is different from the local_requirements.txt file in that it does not use the integrated submodule because Streamlit does not yet support submodules.  
 This will be changed ASAP when the support for submodules is implemented by the Streamlit framework.
 
+# Results  
 
 ## Faster R-CNN with ResNet-50 backbone
 |   Category Name        					     |   Iterations  |   mAP    |   AP75   |   AP50   | system measures mAP |  staves mAP   |  stave measures mAP   |
