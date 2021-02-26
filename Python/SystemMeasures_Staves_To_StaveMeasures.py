@@ -133,8 +133,8 @@ for d in random.sample(muscima_data, 1):
 # get all boxes for one image:
 path_to_img = "./../Data\CVC_Muscima_Augmented\CVCMUSCIMA_MultiConditionAligned\staffline-y-variation-v1\w-25\p012.png"
 
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, metadata, path_to_img, [0])
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, metadata, path_to_img, [1])
+ImageDisplayer().displaySpecificPredictData(predictor, path_to_img, [0])
+ImageDisplayer().displaySpecificPredictData(predictor, path_to_img, [1])
 
 im = cv2.imread(path_to_img)
 outputs = predictor(im)

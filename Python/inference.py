@@ -41,9 +41,13 @@ type_of_annotation = ["staves"]
 # type_of_annotation = ["system_measures", "staves"]
 # type_of_annotation = ["system_measures", "stave_measures", "staves"]
 
-json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
+# %%
+# to decide which network should be used to predict the data
+network_type = "R_50_FPN_3x"
+# network_type = "R_101_FPN_3x"
 
 # %%
+json_pathname_extension = "-".join(str(elem) for elem in type_of_annotation)
 json_path = os.path.join(root_dir, "CVC_muscima_" + json_pathname_extension + ".json")
 
 muscima_data = DataLoader().load_from_json(json_path)
@@ -91,9 +95,6 @@ def setup_cfg(num_classes, cfg_file, existing_model_weight_path):
     return cfg
 
 # %%
-network_type = "R_50_FPN_3x"
-# network_type = "R_101_FPN_3x"
-
 model_dir = os.path.join(root_dir, "Models", network_type + "-" + json_pathname_extension)
 
 cfg_file = "COCO-Detection/faster_rcnn_" + network_type + ".yaml"

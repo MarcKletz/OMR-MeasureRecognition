@@ -31,11 +31,11 @@ class ImageDisplayer():
             v = v.draw_instance_predictions(outputs["instances"].to("cpu"), category)
             self.cv2_imshow(v.get_image()[:, :, ::-1])
 
-    def displaySpecificPredictData(self, predictor, data, meta_data, path_to_page, category=None): 
+    def displaySpecificPredictData(self, predictor, path_to_page, category=None): 
         print(path_to_page)
         im = cv2.imread(path_to_page)
         outputs = predictor(im)
-        v = CustomVisualizer(im[:, :, ::-1], metadata=meta_data, scale=1)
+        v = CustomVisualizer(im[:, :, ::-1], scale=1)
         v = v.draw_instance_predictions(outputs["instances"].to("cpu"), category)
         self.cv2_imshow(v.get_image()[:, :, ::-1])
 

@@ -104,8 +104,8 @@ path_to_weight_file = os.path.join(model_dir, last_checkpoint)
 cfg = setup_cfg(len(type_of_annotation), model_dir, cfg_file, path_to_weight_file)
 predictor = DefaultPredictor(cfg)
 
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, muscima_metadata, image_to_display, [0])
-ImageDisplayer().displaySpecificPredictData(predictor, muscima_data, muscima_metadata, image_to_display, [1])
+ImageDisplayer().displaySpecificPredictData(predictor, image_to_display, [0])
+ImageDisplayer().displaySpecificPredictData(predictor, image_to_display, [1])
 
 # %%
 def draw_boxes(image_path, df_page):
