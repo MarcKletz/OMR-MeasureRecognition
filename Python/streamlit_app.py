@@ -136,7 +136,6 @@ def main():
         ```
         """
 
-@st.cache(suppress_st_warning=True)
 def display_metrics(model, type_of_annotation, with_visualizer=True):
     df = pd.DataFrame(columns=["Category Name", "Iterations", "mAP", "AP75", "AP50"])
     df.style.format({"E" : "{:.3%}"})
