@@ -13,3 +13,5 @@ Pillow
 Requests
 scikit_learn
 ninja
+IPython
+
