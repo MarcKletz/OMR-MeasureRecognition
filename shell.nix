@@ -137,6 +137,83 @@ let
       tensorflow-tensorboard
     ];
   });
+  muscima = (pkgs.python38Packages.buildPythonPackage rec {
+    name = "muscima";
+    version = "0.10.0";
+    src = builtins.fetchGit {
+      url = "https://github.com/hajicj/muscima.git";
+      ref = "master";
+      rev = "f6f3d014761442af52a108bb873786a41d6de4b3";
+    };
+    checkPhase = "true"; # Skip checks 'cause they fail
+    propagatedBuildInputs = with pkgs.python38Packages; [
+      lxml
+      numpy
+      pytest
+      pytestcov
+      scikitimage
+      scikitlearn
+      matplotlib
+      #midi2audio
+      future
+    ];
+    removeBin = ''
+      rm -r $out/bin
+    '';
+    postPhases = ["removeBin"];
+  });
+  mung = (pkgs.python38Packages.buildPythonPackage rec {
+    name = "mung";
+    version = "1.0";
+    src = builtins.fetchGit {
+      url = "https://github.com/OMR-Research/mung.git";
+      ref = "master";
+      rev = "9ff3e3addde3b200562d21c2b4990d3667398ee0";
+    };
+    checkPhase = "true"; # Skip checks 'cause they fail
+    propagatedBuildInputs = with pkgs.python38Packages; [
+      lxml
+      numpy
+      pytest
+      pytestcov
+      scikitimage
+      scikitlearn
+      matplotlib
+      midiutil
+      #midi2audio
+      future
+    ];
+    removeBin = ''
+      rm -r $out/bin
+    '';
+    postPhases = ["removeBin"];
+  });
+  omrdatasettools = (pkgs.python38Packages.buildPythonPackage rec {
+    name = "omrdatasettools";
+    version = "1.3.1";
+    src = builtins.fetchGit {
+      url = "https://github.com/apacha/omr-datasets.git";
+      ref = "${version}";
+    };
+    checkPhase = "true"; # Skip checks 'cause they fail
+    propagatedBuildInputs = with pkgs.python38Packages; [
+      pillow
+      pytest
+      scikitimage
+      h5py
+      pyhamcrest
+      muscima
+      mung
+      numpy
+      lxml
+      tqdm
+      twine
+      sympy
+      sphinx_rtd_theme
+      pandas
+      ipython
+    ];
+  });
 
   my-python-packages = python-packages: with python-packages; [
     pip
@@ -149,6 +226,8 @@ let
     detectron2
     pytorch
     torchvision
+    opencv3
+    omrdatasettools
   ];
   python-with-my-packages = pkgs.python38.withPackages my-python-packages;
 in
