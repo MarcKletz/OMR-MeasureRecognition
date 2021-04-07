@@ -214,6 +214,30 @@ let
       ipython
     ];
   });
+  
+  pydeck = (pkgs.python38Packages.buildPythonPackage rec {
+    pname = "pydeck";
+    version = "0.6.1";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "1l18iy3l6cgqlxwf9bvqijy494hx4hsnj1nm9i2pabz94i24hcd4";
+    };
+
+    doCheck = false; # I don't know how to tell it where to find pytest
+
+    nativeBuildInputs = with pkgs.python38Packages; [
+      pytest
+    ];
+    propagatedBuildInputs = with pkgs.python38Packages; [
+      ipykernel
+      ipywidgets
+      traitlets
+      jinja2
+      numpy
+    ];
+  });
+
 
   my-python-packages = python-packages: with python-packages; [
     pip
@@ -236,7 +260,22 @@ in
     buildInputs = with pkgs; [
       python-with-my-packages
       ninja
-      streamlit
+      (streamlit.overridePythonAttrs (old: rec {
+        version = "0.79.0";
+
+        src = pkgs.python38Packages.fetchPypi {
+          inherit version;
+          inherit (old) pname format;
+          sha256 = "085br2yi5l4xrb12bn8iykw10fmix5jy80ycl1s53qgynl0wkhim";
+        };
+        propagatedBuildInputs = (lib.remove pkgs.python38Packages.tornado_5 old.propagatedBuildInputs) ++ (with pkgs.python38Packages; [
+          cachetools
+          pyarrow
+          pydeck
+          GitPython
+          tornado
+        ]);
+      }))
       opencv2
     ];
   }
